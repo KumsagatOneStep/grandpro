@@ -9,8 +9,20 @@ interface ContactEmailData {
   message?: string
 }
 
+function esc(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export async function sendContactEmail(data: ContactEmailData) {
-  const { name, phone, service, message } = data
+  const name = esc(data.name.slice(0, 200))
+  const phone = esc(data.phone.slice(0, 50))
+  const service = data.service ? esc(data.service.slice(0, 100)) : null
+  const message = data.message ? esc(data.message.slice(0, 2000)) : null
 
   return resend.emails.send({
     from: 'GrandPro Moving <onboarding@resend.dev>',
