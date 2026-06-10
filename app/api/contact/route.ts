@@ -12,9 +12,13 @@ const ratelimit = new Ratelimit({
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
-  const { success } = await ratelimit.limit(ip)
-  if (!success) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  try {
+    const { success } = await ratelimit.limit(ip)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+  } catch (e) {
+    console.warn('Rate limiter unavailable:', e)
   }
 
   try {
