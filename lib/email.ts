@@ -1,6 +1,8 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
 interface ContactEmailData {
   name: string
@@ -24,7 +26,7 @@ export async function sendContactEmail(data: ContactEmailData) {
   const service = data.service ? esc(data.service.slice(0, 100)) : null
   const message = data.message ? esc(data.message.slice(0, 2000)) : null
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: 'GrandPro Moving <noreply@grandpro.kz>',
     to: [process.env.CONTACT_EMAIL ?? 'info@grandpro.kz'],
     subject: `Новая заявка от ${name}`,
