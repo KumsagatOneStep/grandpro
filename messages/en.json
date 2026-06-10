@@ -20,6 +20,14 @@
     "formPhone": "Phone Number",
     "formService": "Moving Type",
     "formSubmit": "Send Request",
+    "formSuccess": "Thank you! We'll call you back within 15 minutes.",
+    "formError": "Error. Please call: +7 707 709-74-22",
+    "formOptions": {
+      "apartment": "Apartment Move",
+      "office": "Office Move",
+      "international": "International",
+      "rigging": "Rigging"
+    },
     "stats": {
       "clients": "clients",
       "years": "years experience",
@@ -112,7 +120,15 @@
     "title": "Client Reviews",
     "subtitle": "Over 3,000 reviews on 2GIS, Google and Yandex",
     "prev": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "ratingLabel": "Rating: {rating} out of 5",
+    "pageLabel": "Page {page}",
+    "items": [
+      { "name": "Aliya M.", "role": "Apartment Move", "avatar": "AM", "rating": 5, "text": "We moved from a 3-bedroom apartment. Everything went perfectly — not a single scratch on the furniture. The guys worked fast and carefully. Fixed price with no surprises was a big plus." },
+      { "name": "Sergey K.", "role": "Office Relocation", "avatar": "SK", "rating": 5, "text": "We moved an entire 40-person office. Done in one day. All equipment was packed professionally. Work resumed the next day without any losses." },
+      { "name": "Maria P.", "role": "International Move", "avatar": "MP", "rating": 5, "text": "Our move from Almaty to Moscow was organized from start to finish. Customs, paperwork, delivery — all turnkey. Very grateful for the professionalism and care!" },
+      { "name": "Nurlan A.", "role": "Rigging Works", "avatar": "NA", "rating": 5, "text": "We moved server equipment weighing 800 kg. Everything was done carefully, nothing was damaged. The team are top-class professionals." }
+    ]
   },
   "faq": {
     "title": "Frequently Asked Questions",
@@ -159,7 +175,7 @@
       "submit": "Send Request",
       "sending": "Sending...",
       "success": "Thank you! We'll call back within 15 minutes.",
-      "error": "Send error. Please call us: +7 700 123-45-67"
+      "error": "Send error. Please call us: +7 707 709-74-22"
     }
   },
   "footer": {
@@ -177,11 +193,17 @@
     "subtitle": "Choose your preferred contact method",
     "whatsapp": "WhatsApp",
     "telegram": "Telegram",
-    "phone": "+7 700 123-45-67",
+    "phone": "+7 707 709-74-22",
     "trigger": "Contact us"
   },
   "gallery": {
     "title": "Our Work in Action",
     "subtitle": "Real photos from our job sites — the team in motion"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page Not Found",
+    "subtitle": "This page doesn't exist. Go back to the homepage — we'll help you with your move.",
+    "back": "Back to Homepage"
   }
 }

@@ -25,7 +25,7 @@ export async function sendContactEmail(data: ContactEmailData) {
   const message = data.message ? esc(data.message.slice(0, 2000)) : null
 
   return resend.emails.send({
-    from: 'GrandPro Moving <onboarding@resend.dev>',
+    from: 'GrandPro Moving <noreply@grandpro.kz>',
     to: [process.env.CONTACT_EMAIL ?? 'info@grandpro.kz'],
     subject: `Новая заявка от ${name}`,
     html: `

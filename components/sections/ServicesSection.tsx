@@ -1,13 +1,13 @@
 'use client'
 import { useTranslations } from 'next-intl'
 import { Home, Building2, Globe, Package, Box, Warehouse } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
 const SERVICE_ICONS = [Home, Building2, Globe, Package, Box, Warehouse]
 const SERVICE_KEYS = ['apartment', 'office', 'international', 'rigging', 'packing', 'storage'] as const
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 44 },
   visible: (i: number) => ({
     opacity: 1,
@@ -15,7 +15,7 @@ const cardVariants = {
     transition: {
       delay: i * 0.08,
       duration: 0.55,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   }),
 }
@@ -82,8 +82,7 @@ export function ServicesSection() {
                   style={{
                     background: 'var(--active-badge)',
                     color: 'var(--color-primary)',
-                    border: '1px solid var(--color-primary)',
-                    borderOpacity: 0.3,
+                    border: '1px solid color-mix(in srgb, var(--color-primary) 30%, transparent)',
                   }}
                 >
                   <Icon size={26} />

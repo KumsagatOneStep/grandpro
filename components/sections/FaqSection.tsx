@@ -7,7 +7,14 @@ import { SectionHeader } from '@/components/ui/SectionHeader'
 export function FaqSection() {
   const t = useTranslations('faq')
   const [open, setOpen] = useState<number | null>(null)
-  const items = t.raw('items') as Array<{ q: string; a: string }>
+  const raw = t.raw('items')
+  const items: Array<{ q: string; a: string }> = Array.isArray(raw)
+    ? raw.filter((item): item is { q: string; a: string } =>
+        typeof item === 'object' && item !== null &&
+        typeof (item as Record<string, unknown>).q === 'string' &&
+        typeof (item as Record<string, unknown>).a === 'string'
+      )
+    : []
 
   return (
     <section className="py-16 md:py-28" style={{ background: 'var(--bg-main)' }}>

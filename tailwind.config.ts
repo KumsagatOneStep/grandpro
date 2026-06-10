@@ -26,8 +26,8 @@ const config: Config = {
         accent: '#10B981',
       },
       fontFamily: {
-        heading: ['Lexend', 'sans-serif'],
-        body: ['Source Sans 3', 'sans-serif'],
+        heading: ['var(--font-lexend)', 'sans-serif'],
+        body: ['var(--font-source-sans)', 'sans-serif'],
       },
       animation: {
         'ticker': 'ticker 30s linear infinite',

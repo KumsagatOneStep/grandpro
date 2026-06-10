@@ -62,8 +62,11 @@ export function Map2GIS({
       script.onload = init
       document.head.appendChild(script)
     } else {
+      let attempts = 0
       const poll = setInterval(() => {
-        if ((window as any).DG) { clearInterval(poll); init() }
+        attempts++
+        if ((window as any).DG) { clearInterval(poll); init(); return }
+        if (attempts >= 40) clearInterval(poll) // stop after 6 seconds
       }, 150)
       return () => clearInterval(poll)
     }

@@ -4,43 +4,24 @@ import { useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
-const REVIEWS = [
-  {
-    name: 'Алия М.',
-    role: 'Квартирный переезд',
-    text: 'Переезжали из 3-комнатной квартиры. Всё прошло идеально — ни одной царапины на мебели. Ребята работали быстро и аккуратно. Отдельный плюс — фиксированная цена без сюрпризов.',
-    rating: 5,
-    avatar: 'АМ',
-  },
-  {
-    name: 'Сергей К.',
-    role: 'Офисный переезд',
-    text: 'Перевозили целый офис на 40 человек. Справились за один день. Всё оборудование упаковали профессионально. Работа продолжилась на следующий день без потерь.',
-    rating: 5,
-    avatar: 'СК',
-  },
-  {
-    name: 'Мария П.',
-    role: 'Международный переезд',
-    text: 'Переезд из Алматы в Москву организовали от и до. Таможня, документы, доставка — всё под ключ. Очень благодарна за профессионализм и внимательность!',
-    rating: 5,
-    avatar: 'МП',
-  },
-  {
-    name: 'Нурлан А.',
-    role: 'Такелажные работы',
-    text: 'Перемещали серверное оборудование весом 800 кг. Всё сделали аккуратно, ничего не повредили. Команда — профессионалы высокого класса.',
-    rating: 5,
-    avatar: 'НА',
-  },
-]
+type Review = { name: string; role: string; avatar: string; rating: number; text: string }
 
 export function ReviewsSection() {
   const t = useTranslations('reviews')
   const [page, setPage] = useState(0)
   const perPage = 2
-  const totalPages = Math.ceil(REVIEWS.length / perPage)
-  const visible = REVIEWS.slice(page * perPage, page * perPage + perPage)
+
+  const raw = t.raw('items')
+  const reviews: Review[] = Array.isArray(raw)
+    ? raw.filter((item): item is Review =>
+        typeof item === 'object' && item !== null &&
+        typeof (item as Record<string, unknown>).name === 'string' &&
+        typeof (item as Record<string, unknown>).text === 'string'
+      )
+    : []
+
+  const totalPages = Math.ceil(reviews.length / perPage)
+  const visible = reviews.slice(page * perPage, page * perPage + perPage)
 
   return (
     <section id="reviews" className="py-16 md:py-28" style={{ background: 'var(--bg-surface)' }}>
@@ -65,7 +46,7 @@ export function ReviewsSection() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              <div className="flex gap-1 mb-5" aria-label={`Рейтинг: ${r.rating} из 5`}>
+              <div className="flex gap-1 mb-5" aria-label={t('ratingLabel', { rating: r.rating })}>
                 {Array.from({ length: r.rating }).map((_, j) => (
                   <Star key={j} size={16} style={{ color: '#F59E0B', fill: '#F59E0B' }} />
                 ))}
@@ -127,7 +108,7 @@ export function ReviewsSection() {
                   background: i === page ? 'var(--color-primary)' : 'var(--color-border)',
                   transform: i === page ? 'scale(1.4)' : 'scale(1)',
                 }}
-                aria-label={`Страница ${i + 1}`}
+                aria-label={t('pageLabel', { page: i + 1 })}
               />
             ))}
           </div>

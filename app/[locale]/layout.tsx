@@ -3,8 +3,23 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
+import { Lexend, Source_Sans_3 } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import './globals.css'
+
+const lexend = Lexend({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-lexend',
+  display: 'swap',
+})
+
+const sourceSans = Source_Sans_3({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-source-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'GrandPro Moving Almaty | Премиальные переезды и логистические решения',
@@ -15,11 +30,20 @@ export const metadata: Metadata = {
     description: 'Высокотехнологичный мувинг для частных лиц и бизнеса. 100% материальная ответственность.',
     url: 'https://grandpro.kz',
     type: 'website',
+    images: [
+      {
+        url: 'https://grandpro.kz/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GrandPro Moving Almaty — профессиональный переезд',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'GrandPro Moving Almaty',
     description: 'Высокотехнологичный мувинг для частных лиц и бизнеса.',
+    images: ['https://grandpro.kz/og-image.png'],
   },
 }
 
@@ -63,7 +87,7 @@ export default async function LocaleLayout({
   const theme: 'dark' | 'light' = themeCookie === 'light' ? 'light' : 'dark'
 
   return (
-    <html lang={locale} className={theme} suppressHydrationWarning>
+    <html lang={locale} className={`${theme} ${lexend.variable} ${sourceSans.variable}`} suppressHydrationWarning>
       <head>
         {/* JSON-LD structured data — native <script> per Next.js 16 docs recommendation */}
         <script

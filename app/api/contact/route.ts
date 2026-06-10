@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 import { sendContactEmail } from '@/lib/email'
 
-// In-memory rate limiter: max 5 requests per IP per 60 seconds
-const rateMap = new Map<string, { count: number; reset: number }>()
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateMap.get(ip)
-  if (!entry || now > entry.reset) {
-    rateMap.set(ip, { count: 1, reset: now + 60_000 })
-    return false
-  }
-  if (entry.count >= 5) return true
-  entry.count++
-  return false
-}
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '60 s'),
+  prefix: 'grandpro:contact',
+})
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
-  if (isRateLimited(ip)) {
+  const { success } = await ratelimit.limit(ip)
+  if (!success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
@@ -36,8 +30,10 @@ export async function POST(request: NextRequest) {
     if (name.length > 200 || phone.length > 50) {
       return NextResponse.json({ error: 'Input too long' }, { status: 400 })
     }
+    const safeService = typeof service === 'string' ? service : undefined
+    const safeMessage = typeof message === 'string' ? message : undefined
 
-    await sendContactEmail({ name, phone, service, message })
+    await sendContactEmail({ name, phone, service: safeService, message: safeMessage })
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Contact form error:', error)

@@ -49,7 +49,7 @@ export function QuickForm() {
     return (
       <div className="text-center py-8">
         <CheckCircle size={48} className="mx-auto mb-4" style={{ color: 'var(--color-primary)' }} />
-        <p className="font-semibold text-lg">Спасибо! Перезвоним в течение 15 минут.</p>
+        <p className="font-semibold text-lg">{t('formSuccess')}</p>
       </div>
     )
   }
@@ -81,13 +81,13 @@ export function QuickForm() {
         onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
       >
         <option value="">— {t('formService')} —</option>
-        <option value="apartment">Квартирный переезд</option>
-        <option value="office">Офисный переезд</option>
-        <option value="international">Международный</option>
-        <option value="rigging">Такелаж</option>
+        <option value="apartment">{t('formOptions.apartment')}</option>
+        <option value="office">{t('formOptions.office')}</option>
+        <option value="international">{t('formOptions.international')}</option>
+        <option value="rigging">{t('formOptions.rigging')}</option>
       </select>
       {error && (
-        <p className="text-red-500 text-sm">Ошибка. Позвоните: +7 707 709-74-22</p>
+        <p className="text-red-500 text-sm">{t('formError')}</p>
       )}
       <button
         type="submit"
