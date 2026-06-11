@@ -1,13 +1,12 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, type ElementType } from 'react'
 import { useTranslations } from 'next-intl'
 import { Loader2, CheckCircle, Home, Building2, Plane, Wrench } from 'lucide-react'
-
-const KZ_PHONE_RE = /^(\+7|8)[\s-]?\(?7\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
+import { KZ_PHONE_RE } from '@/lib/validators'
 
 type ServiceValue = 'apartment' | 'office' | 'international' | 'rigging'
 
-const SERVICE_OPTIONS: { value: ServiceValue; icon: React.ElementType }[] = [
+const SERVICE_OPTIONS: { value: ServiceValue; icon: ElementType }[] = [
   { value: 'apartment',     icon: Home },
   { value: 'office',        icon: Building2 },
   { value: 'international', icon: Plane },
@@ -28,17 +27,33 @@ export function QuickForm() {
   const [error, setError] = useState(false)
   const [service, setService] = useState<ServiceValue | ''>('')
   const [serviceError, setServiceError] = useState(false)
+  const [phoneValue, setPhoneValue] = useState('+7')
   const [phoneError, setPhoneError] = useState(false)
   const [phoneFocused, setPhoneFocused] = useState(false)
   // double-submit guard
   const submittingRef = useRef(false)
 
+  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    let v = e.target.value
+    if (!v.startsWith('+7')) {
+      if (v.startsWith('8'))       v = '+7' + v.slice(1)  // 87071234567 → +77071234567
+      else if (v.startsWith('77')) v = '+' + v            // 77071234567 → +77071234567
+      else                         v = '+7' + v           // 7071234567 or bare digits
+    }
+    if (v.length < 2) v = '+7'
+    setPhoneValue(v)
+    if (phoneError) setPhoneError(false)
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
-    const phoneVal = (form.elements.namedItem('phone') as HTMLInputElement).value
-    if (!KZ_PHONE_RE.test(phoneVal)) { setPhoneError(true); return }
-    if (!service) { setServiceError(true); return }
+    // Validate all fields before early return so user sees all errors at once
+    const phoneInvalid = !KZ_PHONE_RE.test(phoneValue)
+    const serviceEmpty = !service
+    if (phoneInvalid) setPhoneError(true)
+    if (serviceEmpty) setServiceError(true)
+    if (phoneInvalid || serviceEmpty) return
     if (submittingRef.current) return
     submittingRef.current = true
 
@@ -48,7 +63,7 @@ export function QuickForm() {
     setPhoneError(false)
     const data = {
       name: (form.elements.namedItem('name') as HTMLInputElement).value,
-      phone: (form.elements.namedItem('phone') as HTMLInputElement).value,
+      phone: phoneValue,
       service,
     }
     try {
@@ -98,30 +113,40 @@ export function QuickForm() {
         onFocus={e => (e.target.style.borderColor = 'var(--color-primary)')}
         onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
       />
-      <input
-        name="phone"
-        type="tel"
-        required
-        placeholder={t('formPhone')}
-        style={{
-          ...inputStyle,
-          borderColor: phoneFocused
-            ? 'var(--color-primary)'
-            : phoneError
-              ? '#ef4444'
-              : 'var(--color-border)',
-        }}
-        onFocus={() => setPhoneFocused(true)}
-        onBlur={e => {
-          setPhoneFocused(false)
-          const v = e.target.value
-          setPhoneError(!!v && !KZ_PHONE_RE.test(v))
-        }}
-        onChange={() => { if (phoneError) setPhoneError(false) }}
-      />
-      {phoneError && (
-        <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{t('formPhoneInvalid')}</p>
-      )}
+
+      <div>
+        {/* sr-only label satisfies WCAG 1.3.1 without changing visual layout */}
+        <label htmlFor="qf-phone" className="sr-only">{t('formPhone')}</label>
+        <input
+          id="qf-phone"
+          name="phone"
+          type="tel"
+          required
+          value={phoneValue}
+          aria-invalid={phoneError}
+          aria-describedby={phoneError ? 'qf-phone-error' : undefined}
+          style={{
+            ...inputStyle,
+            borderColor: phoneFocused
+              ? 'var(--color-primary)'
+              : phoneError
+                ? '#ef4444'
+                : 'var(--color-border)',
+          }}
+          onFocus={() => setPhoneFocused(true)}
+          onBlur={() => {
+            setPhoneFocused(false)
+            // Treat bare prefix as empty — show error only if user started typing
+            if (phoneValue !== '+7') setPhoneError(!KZ_PHONE_RE.test(phoneValue))
+          }}
+          onChange={handlePhoneChange}
+        />
+        {phoneError && (
+          <p id="qf-phone-error" className="text-xs mt-1" style={{ color: '#ef4444' }}>
+            {t('formPhoneInvalid')}
+          </p>
+        )}
+      </div>
 
       {/* Service type — icon card radio group */}
       <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>

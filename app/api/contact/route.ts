@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { sendContactEmail } from '@/lib/email'
+import { KZ_PHONE_RE } from '@/lib/validators'
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(5, '60 s'),
   prefix: 'grandpro:contact',
 })
-
-const KZ_PHONE_RE = /^(\+7|8)[\s-]?\(?7\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
 
 const VALID_SERVICES = new Set([
   'apartment', 'office', 'international', 'rigging', 'packing', 'storage',
@@ -24,6 +23,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
   } catch (e) {
+    // Fail open intentionally: Redis outage should not block legitimate requests
     console.warn('Rate limiter unavailable:', e)
   }
 

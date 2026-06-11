@@ -3,8 +3,7 @@ import { useState, useRef, useEffect, useCallback, type ElementType } from 'reac
 import { useTranslations } from 'next-intl'
 import { Loader2, CheckCircle, ChevronDown, Home, Building2, Plane, Wrench, Package, Warehouse, Check } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
-
-const KZ_PHONE_RE = /^(\+7|8)[\s-]?\(?7\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
+import { KZ_PHONE_RE } from '@/lib/validators'
 
 type ServiceValue = 'apartment' | 'office' | 'international' | 'rigging' | 'packing' | 'storage'
 
@@ -223,10 +222,23 @@ export function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [service, setService] = useState<ServiceValue | ''>('')
   const [serviceError, setServiceError] = useState(false)
+  const [phoneValue, setPhoneValue] = useState('+7')
   const [phoneError, setPhoneError] = useState(false)
   const [phoneFocused, setPhoneFocused] = useState(false)
   // double-submit guard
   const submittingRef = useRef(false)
+
+  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    let v = e.target.value
+    if (!v.startsWith('+7')) {
+      if (v.startsWith('8'))       v = '+7' + v.slice(1)  // 87071234567 → +77071234567
+      else if (v.startsWith('77')) v = '+' + v            // 77071234567 → +77071234567
+      else                         v = '+7' + v           // 7071234567 or bare digits
+    }
+    if (v.length < 2) v = '+7'
+    setPhoneValue(v)
+    if (phoneError) setPhoneError(false)
+  }
 
   // build translated options inside component so t() is in scope
   const serviceOptions = SERVICE_VALUES.map(v => ({
@@ -237,9 +249,12 @@ export function ContactForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
-    const phoneVal = (form.elements.namedItem('phone') as HTMLInputElement).value
-    if (!KZ_PHONE_RE.test(phoneVal)) { setPhoneError(true); return }
-    if (!service) { setServiceError(true); return }
+    // Validate all fields before early return so user sees all errors at once
+    const phoneInvalid = !KZ_PHONE_RE.test(phoneValue)
+    const serviceEmpty = !service
+    if (phoneInvalid) setPhoneError(true)
+    if (serviceEmpty) setServiceError(true)
+    if (phoneInvalid || serviceEmpty) return
     if (submittingRef.current) return
     submittingRef.current = true
 
@@ -249,7 +264,7 @@ export function ContactForm() {
     setPhoneError(false)
     const data = {
       name: (form.elements.namedItem('name') as HTMLInputElement).value,
-      phone: (form.elements.namedItem('phone') as HTMLInputElement).value,
+      phone: phoneValue,
       service,
       message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
     }
@@ -261,6 +276,8 @@ export function ContactForm() {
       })
       if (res.ok) {
         setService('')
+        setPhoneValue('+7')
+        setPhoneFocused(false)
         form.reset()
         setStatus('success')
       } else {
@@ -310,6 +327,9 @@ export function ContactForm() {
             name="phone"
             type="tel"
             required
+            value={phoneValue}
+            aria-invalid={phoneError}
+            aria-describedby={phoneError ? 'cf-phone-error' : undefined}
             style={{
               ...fieldStyle,
               borderColor: phoneFocused
@@ -319,15 +339,14 @@ export function ContactForm() {
                   : 'var(--color-border)',
             }}
             onFocus={() => setPhoneFocused(true)}
-            onBlur={e => {
+            onBlur={() => {
               setPhoneFocused(false)
-              const v = e.target.value
-              setPhoneError(!!v && !KZ_PHONE_RE.test(v))
+              if (phoneValue !== '+7') setPhoneError(!KZ_PHONE_RE.test(phoneValue))
             }}
-            onChange={() => { if (phoneError) setPhoneError(false) }}
+            onChange={handlePhoneChange}
           />
           {phoneError && (
-            <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{t('phoneInvalid')}</p>
+            <p id="cf-phone-error" className="text-xs mt-1" style={{ color: '#ef4444' }}>{t('phoneInvalid')}</p>
           )}
         </div>
       </div>
