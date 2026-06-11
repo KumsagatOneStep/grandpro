@@ -3,7 +3,7 @@ import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Loader2, CheckCircle, Home, Building2, Plane, Wrench } from 'lucide-react'
 
-const KZ_PHONE_RE = /^(\+7|8)[\s\-]?\(?7\d{2}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/
+const KZ_PHONE_RE = /^(\+7|8)[\s-]?\(?7\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
 
 type ServiceValue = 'apartment' | 'office' | 'international' | 'rigging'
 
@@ -29,6 +29,7 @@ export function QuickForm() {
   const [service, setService] = useState<ServiceValue | ''>('')
   const [serviceError, setServiceError] = useState(false)
   const [phoneError, setPhoneError] = useState(false)
+  const [phoneFocused, setPhoneFocused] = useState(false)
   // double-submit guard
   const submittingRef = useRef(false)
 
@@ -102,14 +103,21 @@ export function QuickForm() {
         type="tel"
         required
         placeholder={t('formPhone')}
-        style={{ ...inputStyle, borderColor: phoneError ? '#ef4444' : 'var(--color-border)' }}
-        onFocus={e => { e.target.style.borderColor = 'var(--color-primary)' }}
-        onBlur={e => {
-          const v = e.target.value
-          const err = !!v && !KZ_PHONE_RE.test(v)
-          setPhoneError(err)
-          e.target.style.borderColor = err ? '#ef4444' : 'var(--color-border)'
+        style={{
+          ...inputStyle,
+          borderColor: phoneFocused
+            ? 'var(--color-primary)'
+            : phoneError
+              ? '#ef4444'
+              : 'var(--color-border)',
         }}
+        onFocus={() => setPhoneFocused(true)}
+        onBlur={e => {
+          setPhoneFocused(false)
+          const v = e.target.value
+          setPhoneError(!!v && !KZ_PHONE_RE.test(v))
+        }}
+        onChange={() => { if (phoneError) setPhoneError(false) }}
       />
       {phoneError && (
         <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{t('formPhoneInvalid')}</p>

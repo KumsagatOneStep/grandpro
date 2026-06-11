@@ -9,7 +9,7 @@ const ratelimit = new Ratelimit({
   prefix: 'grandpro:contact',
 })
 
-const KZ_PHONE_RE = /^(\+7|8)[\s\-]?\(?7\d{2}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/
+const KZ_PHONE_RE = /^(\+7|8)[\s-]?\(?7\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
 
 const VALID_SERVICES = new Set([
   'apartment', 'office', 'international', 'rigging', 'packing', 'storage',
