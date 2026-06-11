@@ -15,6 +15,8 @@ const SERVICE_OPTIONS: { value: ServiceValue; icon: ElementType; label: string }
   { value: 'storage',       icon: Warehouse, label: 'Хранение' },
 ]
 
+type CloseReason = 'escape' | 'select' | 'outside' | 'tab'
+
 function ServiceDropdown({
   id,
   value,
@@ -33,13 +35,24 @@ function ServiceDropdown({
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
-  const selected = SERVICE_OPTIONS.find(o => o.value === value)
+  // #1 fix: guard so focus-return effect doesn't fire on initial mount
+  const mountedRef = useRef(false)
+  // #5 fix: track close reason to distinguish Tab (don't steal focus) from Escape/select/outside
+  const closeReasonRef = useRef<CloseReason>('outside')
 
-  // #5 fix: handle both mousedown and touchstart for click-outside
+  const selected = SERVICE_OPTIONS.find(o => o.value === value)
+  const selectedIndex = SERVICE_OPTIONS.findIndex(o => o.value === value)
+
+  const close = useCallback((reason: CloseReason) => {
+    closeReasonRef.current = reason
+    setOpen(false)
+  }, [])
+
+  // click-outside: mousedown + touchstart
   useEffect(() => {
     function handleOutside(e: MouseEvent | TouchEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
+        close('outside')
       }
     }
     document.addEventListener('mousedown', handleOutside)
@@ -48,26 +61,30 @@ function ServiceDropdown({
       document.removeEventListener('mousedown', handleOutside)
       document.removeEventListener('touchstart', handleOutside)
     }
-  }, [])
+  }, [close])
 
-  // #2 fix: return focus to trigger on close
+  // #1 fix: return focus to trigger on close — but NOT on initial mount, and NOT on Tab
   useEffect(() => {
-    if (!open) {
+    if (!mountedRef.current) {
+      mountedRef.current = true
+      return
+    }
+    if (!open && closeReasonRef.current !== 'tab') {
       setFocusedIndex(-1)
       triggerRef.current?.focus()
     }
   }, [open])
 
-  // #1 fix: keyboard navigation
   const handleTriggerKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
+      // #6 fix: on open, focus the currently selected item (or first)
       setOpen(true)
-      setFocusedIndex(0)
+      setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0)
     } else if (e.key === 'Escape') {
-      setOpen(false)
+      close('escape')
     }
-  }, [])
+  }, [close, selectedIndex])
 
   const handleListKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
@@ -75,19 +92,27 @@ function ServiceDropdown({
       setFocusedIndex(i => Math.min(i + 1, SERVICE_OPTIONS.length - 1))
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setFocusedIndex(i => Math.max(i - 1, 0))
+      // #4 fix: ArrowUp at index 0 closes the dropdown (APG pattern)
+      if (focusedIndex === 0) {
+        close('escape')
+      } else {
+        setFocusedIndex(i => i - 1)
+      }
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       if (focusedIndex >= 0) {
         onChange(SERVICE_OPTIONS[focusedIndex].value)
-        setOpen(false)
+        close('select')
       }
-    } else if (e.key === 'Escape' || e.key === 'Tab') {
-      setOpen(false)
+    } else if (e.key === 'Escape') {
+      close('escape')
+    } else if (e.key === 'Tab') {
+      // #5 fix: Tab lets browser handle focus movement naturally
+      close('tab')
     }
-  }, [focusedIndex, onChange])
+  }, [focusedIndex, onChange, close])
 
-  // focus the list item when focusedIndex changes
+  // move DOM focus to the focused list item
   useEffect(() => {
     if (open && focusedIndex >= 0) {
       const items = listRef.current?.querySelectorAll('[role=option]')
@@ -106,18 +131,25 @@ function ServiceDropdown({
         aria-expanded={open}
         aria-controls={`${id}-listbox`}
         aria-activedescendant={open && focusedIndex >= 0 ? `${id}-option-${focusedIndex}` : undefined}
-        onClick={() => { setOpen(o => !o); setFocusedIndex(0) }}
+        // #6 fix: only set focusedIndex when opening, not closing
+        onClick={() => {
+          if (open) {
+            close('outside')
+          } else {
+            setOpen(true)
+            setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0)
+          }
+        }}
         onKeyDown={handleTriggerKeyDown}
-        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-0"
+        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-200 cursor-pointer"
         style={{
           background: 'var(--bg-main)',
+          // #7 fix: fully declarative border — no imperative onFocus/onBlur mutations
           border: `1px solid ${hasError ? '#ef4444' : open ? 'var(--color-primary)' : 'var(--color-border)'}`,
           color: selected ? 'var(--color-text)' : 'var(--color-text-muted)',
           outline: 'none',
-          // #9 fix: use box-shadow for focus-visible since outline is none
+          boxShadow: open ? '0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent)' : 'none',
         }}
-        onFocus={e => { if (!open) e.currentTarget.style.borderColor = 'var(--color-primary)' }}
-        onBlur={e => { if (!open) e.currentTarget.style.borderColor = hasError ? '#ef4444' : 'var(--color-border)' }}
       >
         {selected ? (
           <>
@@ -151,7 +183,8 @@ function ServiceDropdown({
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             onKeyDown={handleListKeyDown}
-            // #3 fix: removed overflow-hidden to prevent clipping during animation
+            // #3 fix: reset focusedIndex when mouse leaves the list
+            onMouseLeave={() => setFocusedIndex(-1)}
             className="absolute z-50 w-full mt-1.5 rounded-xl"
             style={{
               background: 'var(--bg-surface)',
@@ -169,11 +202,10 @@ function ServiceDropdown({
                   role="option"
                   aria-selected={active}
                   tabIndex={-1}
-                  onClick={() => { onChange(v); setOpen(false) }}
+                  onClick={() => { onChange(v); close('select') }}
                   onMouseEnter={() => setFocusedIndex(idx)}
                   className="flex items-center gap-3 px-4 py-3 text-sm cursor-pointer transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl outline-none"
                   style={{
-                    // #4 fix: single source of truth — no imperative style mutations
                     background: active
                       ? 'color-mix(in srgb, var(--color-primary) 12%, transparent)'
                       : focused
@@ -226,7 +258,6 @@ export function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-      // #6 fix: reset state and form together before showing success
       if (res.ok) {
         setService('')
         form.reset()
@@ -277,7 +308,6 @@ export function ContactForm() {
       </div>
 
       <div>
-        {/* #7 fix: label htmlFor points to the trigger button id */}
         <label
           className="block text-sm font-medium mb-1.5"
           htmlFor="cf-service"
