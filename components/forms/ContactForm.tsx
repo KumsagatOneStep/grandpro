@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl'
 import { Loader2, CheckCircle, ChevronDown, Home, Building2, Plane, Wrench, Package, Warehouse, Check } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+const KZ_PHONE_RE = /^(\+7|8)[\s\-]?\(?7\d{2}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/
+
 type ServiceValue = 'apartment' | 'office' | 'international' | 'rigging' | 'packing' | 'storage'
 
 const SERVICE_ICONS: Record<ServiceValue, ElementType> = {
@@ -221,6 +223,7 @@ export function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [service, setService] = useState<ServiceValue | ''>('')
   const [serviceError, setServiceError] = useState(false)
+  const [phoneError, setPhoneError] = useState(false)
   // double-submit guard
   const submittingRef = useRef(false)
 
@@ -232,6 +235,9 @@ export function ContactForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    const form = e.currentTarget
+    const phoneVal = (form.elements.namedItem('phone') as HTMLInputElement).value
+    if (!KZ_PHONE_RE.test(phoneVal)) { setPhoneError(true); return }
     if (!service) { setServiceError(true); return }
     if (submittingRef.current) return
     submittingRef.current = true
@@ -239,7 +245,7 @@ export function ContactForm() {
     setLoading(true)
     setStatus('idle')
     setServiceError(false)
-    const form = e.currentTarget
+    setPhoneError(false)
     const data = {
       name: (form.elements.namedItem('name') as HTMLInputElement).value,
       phone: (form.elements.namedItem('phone') as HTMLInputElement).value,
@@ -295,10 +301,26 @@ export function ContactForm() {
           <input id="cf-name" name="name" type="text" required style={fieldStyle} onFocus={onFocus} onBlur={onBlur} />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5" htmlFor="cf-phone" style={{ color: 'var(--color-text)' }}>
+          <label className="block text-sm font-medium mb-1.5" htmlFor="cf-phone" style={{ color: phoneError ? '#ef4444' : 'var(--color-text)' }}>
             {t('phone')}
           </label>
-          <input id="cf-phone" name="phone" type="tel" required style={fieldStyle} onFocus={onFocus} onBlur={onBlur} />
+          <input
+            id="cf-phone"
+            name="phone"
+            type="tel"
+            required
+            style={{ ...fieldStyle, borderColor: phoneError ? '#ef4444' : 'var(--color-border)' }}
+            onFocus={e => { e.target.style.borderColor = 'var(--color-primary)' }}
+            onBlur={e => {
+              const v = e.target.value
+              const err = !!v && !KZ_PHONE_RE.test(v)
+              setPhoneError(err)
+              e.target.style.borderColor = err ? '#ef4444' : 'var(--color-border)'
+            }}
+          />
+          {phoneError && (
+            <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{t('phoneInvalid')}</p>
+          )}
         </div>
       </div>
 

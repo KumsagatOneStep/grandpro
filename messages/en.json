@@ -29,6 +29,7 @@
       "rigging": "Rigging"
     },
     "formServiceRequired": "— select type",
+    "formPhoneInvalid": "Invalid format (+7 7XX XXX XX XX)",
     "stats": {
       "clients": "clients",
       "years": "years experience",
@@ -177,6 +178,7 @@
       "sending": "Sending...",
       "success": "Thank you! We'll call back within 15 minutes.",
       "error": "Send error. Please call us: +7 707 709-74-22",
+      "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)",
       "serviceRequired": "— select a service",
       "serviceOptions": {
         "apartment": "Apartment Move",

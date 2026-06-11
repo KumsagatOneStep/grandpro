@@ -9,6 +9,8 @@ const ratelimit = new Ratelimit({
   prefix: 'grandpro:contact',
 })
 
+const KZ_PHONE_RE = /^(\+7|8)[\s\-]?\(?7\d{2}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/
+
 const VALID_SERVICES = new Set([
   'apartment', 'office', 'international', 'rigging', 'packing', 'storage',
 ])
@@ -34,6 +36,9 @@ export async function POST(request: NextRequest) {
     }
     if (!name.trim() || !phone.trim()) {
       return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 })
+    }
+    if (!KZ_PHONE_RE.test(phone)) {
+      return NextResponse.json({ error: 'Invalid phone format' }, { status: 400 })
     }
     if (name.length > 200 || phone.length > 50) {
       return NextResponse.json({ error: 'Input too long' }, { status: 400 })

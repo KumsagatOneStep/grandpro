@@ -29,6 +29,7 @@
       "rigging": "Такелаж"
     },
     "formServiceRequired": "— выберите тип",
+    "formPhoneInvalid": "Неверный формат (+7 7XX XXX XX XX)",
     "stats": {
       "clients": "клиентов",
       "years": "лет опыта",
@@ -177,6 +178,7 @@
       "sending": "Отправляем...",
       "success": "Спасибо! Перезвоним в течение 15 минут.",
       "error": "Ошибка отправки. Позвоните нам: +7 707 709-74-22",
+      "phoneInvalid": "Неверный формат (+7 7XX XXX XX XX)",
       "serviceRequired": "— выберите услугу",
       "serviceOptions": {
         "apartment": "Квартирный переезд",

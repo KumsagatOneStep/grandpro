@@ -29,6 +29,7 @@
       "rigging": "Такелаж"
     },
     "formServiceRequired": "— түрін таңдаңыз",
+    "formPhoneInvalid": "Қате формат (+7 7XX XXX XX XX)",
     "stats": {
       "clients": "клиент",
       "years": "жыл тәжірибе",
@@ -177,6 +178,7 @@
       "sending": "Жіберілуде...",
       "success": "Рахмет! 15 минут ішінде қоңырау шаламыз.",
       "error": "Жіберу қатесі. Тікелей қоңырау шалыңыз: +7 707 709-74-22",
+      "phoneInvalid": "Қате формат (+7 7XX XXX XX XX)",
       "serviceRequired": "— қызметті таңдаңыз",
       "serviceOptions": {
         "apartment": "Пәтерлік көшу",
