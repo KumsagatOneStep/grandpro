@@ -6,26 +6,30 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 type ServiceValue = 'apartment' | 'office' | 'international' | 'rigging' | 'packing' | 'storage'
 
-const SERVICE_OPTIONS: { value: ServiceValue; icon: ElementType; label: string }[] = [
-  { value: 'apartment',     icon: Home,      label: 'Квартирный переезд' },
-  { value: 'office',        icon: Building2, label: 'Офисный переезд' },
-  { value: 'international', icon: Plane,     label: 'Международный' },
-  { value: 'rigging',       icon: Wrench,    label: 'Такелаж' },
-  { value: 'packing',       icon: Package,   label: 'Упаковка' },
-  { value: 'storage',       icon: Warehouse, label: 'Хранение' },
-]
+const SERVICE_ICONS: Record<ServiceValue, ElementType> = {
+  apartment:     Home,
+  office:        Building2,
+  international: Plane,
+  rigging:       Wrench,
+  packing:       Package,
+  storage:       Warehouse,
+}
 
-type CloseReason = 'escape' | 'select' | 'outside' | 'tab'
+const SERVICE_VALUES: ServiceValue[] = ['apartment', 'office', 'international', 'rigging', 'packing', 'storage']
+
+type CloseReason = 'escape' | 'select' | 'outside' | 'toggle' | 'tab'
 
 function ServiceDropdown({
   id,
   value,
+  options,
   onChange,
   placeholder,
   hasError,
 }: {
   id: string
   value: ServiceValue | ''
+  options: { value: ServiceValue; label: string }[]
   onChange: (v: ServiceValue) => void
   placeholder: string
   hasError: boolean
@@ -35,20 +39,18 @@ function ServiceDropdown({
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
-  // #1 fix: guard so focus-return effect doesn't fire on initial mount
   const mountedRef = useRef(false)
-  // #5 fix: track close reason to distinguish Tab (don't steal focus) from Escape/select/outside
   const closeReasonRef = useRef<CloseReason>('outside')
 
-  const selected = SERVICE_OPTIONS.find(o => o.value === value)
-  const selectedIndex = SERVICE_OPTIONS.findIndex(o => o.value === value)
+  const selected = options.find(o => o.value === value)
+  const selectedIndex = options.findIndex(o => o.value === value)
+  const SelectedIcon = value ? SERVICE_ICONS[value] : null
 
   const close = useCallback((reason: CloseReason) => {
     closeReasonRef.current = reason
     setOpen(false)
   }, [])
 
-  // click-outside: mousedown + touchstart
   useEffect(() => {
     function handleOutside(e: MouseEvent | TouchEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -63,12 +65,8 @@ function ServiceDropdown({
     }
   }, [close])
 
-  // #1 fix: return focus to trigger on close — but NOT on initial mount, and NOT on Tab
   useEffect(() => {
-    if (!mountedRef.current) {
-      mountedRef.current = true
-      return
-    }
+    if (!mountedRef.current) { mountedRef.current = true; return }
     if (!open && closeReasonRef.current !== 'tab') {
       setFocusedIndex(-1)
       triggerRef.current?.focus()
@@ -78,7 +76,6 @@ function ServiceDropdown({
   const handleTriggerKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      // #6 fix: on open, focus the currently selected item (or first)
       setOpen(true)
       setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0)
     } else if (e.key === 'Escape') {
@@ -89,30 +86,21 @@ function ServiceDropdown({
   const handleListKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setFocusedIndex(i => Math.min(i + 1, SERVICE_OPTIONS.length - 1))
+      setFocusedIndex(i => Math.min(i + 1, options.length - 1))
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      // #4 fix: ArrowUp at index 0 closes the dropdown (APG pattern)
-      if (focusedIndex === 0) {
-        close('escape')
-      } else {
-        setFocusedIndex(i => i - 1)
-      }
+      if (focusedIndex === 0) close('escape')
+      else setFocusedIndex(i => i - 1)
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      if (focusedIndex >= 0) {
-        onChange(SERVICE_OPTIONS[focusedIndex].value)
-        close('select')
-      }
+      if (focusedIndex >= 0) { onChange(options[focusedIndex].value); close('select') }
     } else if (e.key === 'Escape') {
       close('escape')
     } else if (e.key === 'Tab') {
-      // #5 fix: Tab lets browser handle focus movement naturally
       close('tab')
     }
-  }, [focusedIndex, onChange, close])
+  }, [focusedIndex, onChange, close, options])
 
-  // move DOM focus to the focused list item
   useEffect(() => {
     if (open && focusedIndex >= 0) {
       const items = listRef.current?.querySelectorAll('[role=option]')
@@ -131,10 +119,9 @@ function ServiceDropdown({
         aria-expanded={open}
         aria-controls={`${id}-listbox`}
         aria-activedescendant={open && focusedIndex >= 0 ? `${id}-option-${focusedIndex}` : undefined}
-        // #6 fix: only set focusedIndex when opening, not closing
         onClick={() => {
           if (open) {
-            close('outside')
+            close('toggle')
           } else {
             setOpen(true)
             setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0)
@@ -144,16 +131,16 @@ function ServiceDropdown({
         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-200 cursor-pointer"
         style={{
           background: 'var(--bg-main)',
-          // #7 fix: fully declarative border — no imperative onFocus/onBlur mutations
           border: `1px solid ${hasError ? '#ef4444' : open ? 'var(--color-primary)' : 'var(--color-border)'}`,
           color: selected ? 'var(--color-text)' : 'var(--color-text-muted)',
           outline: 'none',
-          boxShadow: open ? '0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent)' : 'none',
+          // color-mix() removed — safe rgba fallback for all browsers
+          boxShadow: open ? '0 0 0 2px rgba(14,165,233,0.3)' : 'none',
         }}
       >
-        {selected ? (
+        {selected && SelectedIcon ? (
           <>
-            <selected.icon size={16} strokeWidth={1.8} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
+            <SelectedIcon size={16} strokeWidth={1.8} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
             <span className="flex-1 text-left font-medium">{selected.label}</span>
           </>
         ) : (
@@ -183,7 +170,6 @@ function ServiceDropdown({
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             onKeyDown={handleListKeyDown}
-            // #3 fix: reset focusedIndex when mouse leaves the list
             onMouseLeave={() => setFocusedIndex(-1)}
             className="absolute z-50 w-full mt-1.5 rounded-xl"
             style={{
@@ -192,9 +178,10 @@ function ServiceDropdown({
               boxShadow: '0 16px 48px var(--shadow-main)',
             }}
           >
-            {SERVICE_OPTIONS.map(({ value: v, icon: Icon, label }, idx) => {
+            {options.map(({ value: v, label }, idx) => {
               const active = value === v
               const focused = focusedIndex === idx
+              const Icon = SERVICE_ICONS[v]
               return (
                 <li
                   key={v}
@@ -206,8 +193,9 @@ function ServiceDropdown({
                   onMouseEnter={() => setFocusedIndex(idx)}
                   className="flex items-center gap-3 px-4 py-3 text-sm cursor-pointer transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl outline-none"
                   style={{
+                    // color-mix() removed — safe rgba fallback
                     background: active
-                      ? 'color-mix(in srgb, var(--color-primary) 12%, transparent)'
+                      ? 'rgba(14,165,233,0.12)'
                       : focused
                         ? 'var(--bg-surface-elevated)'
                         : 'transparent',
@@ -233,14 +221,20 @@ export function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [service, setService] = useState<ServiceValue | ''>('')
   const [serviceError, setServiceError] = useState(false)
+  // double-submit guard
+  const submittingRef = useRef(false)
+
+  // build translated options inside component so t() is in scope
+  const serviceOptions = SERVICE_VALUES.map(v => ({
+    value: v,
+    label: t(`serviceOptions.${v}` as Parameters<typeof t>[0]),
+  }))
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-
-    if (!service) {
-      setServiceError(true)
-      return
-    }
+    if (!service) { setServiceError(true); return }
+    if (submittingRef.current) return
+    submittingRef.current = true
 
     setLoading(true)
     setStatus('idle')
@@ -269,6 +263,7 @@ export function ContactForm() {
       setStatus('error')
     } finally {
       setLoading(false)
+      submittingRef.current = false
     }
   }
 
@@ -313,11 +308,12 @@ export function ContactForm() {
           htmlFor="cf-service"
           style={{ color: serviceError ? '#ef4444' : 'var(--color-text)' }}
         >
-          {t('service')}{serviceError && ' — выберите услугу'}
+          {t('service')}{serviceError && t('serviceRequired')}
         </label>
         <ServiceDropdown
           id="cf-service"
           value={service}
+          options={serviceOptions}
           onChange={v => { setService(v); setServiceError(false) }}
           placeholder={t('servicePlaceholder')}
           hasError={serviceError}
@@ -354,7 +350,7 @@ export function ContactForm() {
         disabled={loading}
         className="w-full py-3.5 rounded-lg font-semibold text-white flex items-center
           justify-center gap-2 cursor-pointer transition-all duration-200
-          hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+          [@media(hover:hover)]:hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
         style={{ background: 'var(--color-primary)' }}
       >
         {loading && <Loader2 size={16} className="animate-spin" />}

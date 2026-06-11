@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Loader2, CheckCircle, Home, Building2, Plane, Wrench } from 'lucide-react'
 
@@ -26,15 +26,14 @@ export function QuickForm() {
   const [error, setError] = useState(false)
   const [service, setService] = useState<ServiceValue | ''>('')
   const [serviceError, setServiceError] = useState(false)
+  // double-submit guard
+  const submittingRef = useRef(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-
-    // #1 fix: require service selection
-    if (!service) {
-      setServiceError(true)
-      return
-    }
+    if (!service) { setServiceError(true); return }
+    if (submittingRef.current) return
+    submittingRef.current = true
 
     setLoading(true)
     setError(false)
@@ -57,6 +56,7 @@ export function QuickForm() {
       setError(true)
     } finally {
       setLoading(false)
+      submittingRef.current = false
     }
   }
 
@@ -102,21 +102,16 @@ export function QuickForm() {
       />
 
       {/* Service type — icon card radio group */}
-      <div>
-        {/* #4 fix: associate label + radiogroup role */}
-        <p
+      <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+        <legend
           id="service-label"
-          className="text-xs font-medium mb-2"
+          className="text-xs font-medium mb-2 w-full"
           style={{ color: serviceError ? '#ef4444' : 'var(--color-text-muted)' }}
         >
-          {t('formService')}{serviceError && ' — выберите тип'}
-        </p>
-        <div
-          role="radiogroup"
-          aria-labelledby="service-label"
-          aria-required="true"
-          className="grid grid-cols-2 gap-2"
-        >
+          {t('formService')}{serviceError && t('formServiceRequired')}
+        </legend>
+        {/* role="radiogroup" on fieldset is implicit; aria-required removed (invalid on radiogroup) */}
+        <div role="radiogroup" aria-labelledby="service-label" className="grid grid-cols-2 gap-2">
           {SERVICE_OPTIONS.map(({ value, icon: Icon }) => {
             const active = service === value
             return (
@@ -125,41 +120,37 @@ export function QuickForm() {
                 type="button"
                 role="radio"
                 aria-checked={active}
-                // #2 fix: no toggle-off — radio buttons don't deselect
                 onClick={() => { setService(value); setServiceError(false) }}
-                className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+                // sticky-hover fix: translate only on hover-capable devices
+                className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer [@media(hover:hover)]:hover:-translate-y-0.5"
                 style={{
-                  // #5 fix: dark background on active for sufficient contrast
                   background: active ? 'var(--color-primary)' : 'var(--bg-main)',
                   border: active
-                    ? `1.5px solid var(--color-primary)`
+                    ? '1.5px solid var(--color-primary)'
                     : serviceError
                       ? '1.5px solid #ef4444'
                       : '1.5px solid var(--color-border)',
-                  // dark text on active (#0c4a6e) passes WCAG AA at 12px
                   color: active ? '#0c4a6e' : 'var(--color-text)',
                   boxShadow: active ? '0 4px 16px rgba(14,165,233,0.3)' : 'none',
                 }}
               >
                 <Icon size={20} strokeWidth={1.8} />
-                {/* #3 fix: explicit key per value, no unsafe cast */}
                 {t(SERVICE_LABELS[value])}
               </button>
             )
           })}
         </div>
-      </div>
+      </fieldset>
 
       {error && (
         <p className="text-red-500 text-sm">{t('formError')}</p>
       )}
 
-      {/* #6 fix: removed inline hover handlers, use CSS-only via Tailwind to avoid disabled state glitch */}
       <button
         type="submit"
         disabled={loading}
         className="w-full py-3 rounded-lg font-semibold text-white flex items-center justify-center
-          gap-2 cursor-pointer transition-all duration-200 hover:-translate-y-0.5
+          gap-2 cursor-pointer transition-all duration-200 [@media(hover:hover)]:hover:-translate-y-0.5
           disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
         style={{ background: 'var(--color-primary)' }}
       >

@@ -28,6 +28,7 @@
       "international": "International",
       "rigging": "Rigging"
     },
+    "formServiceRequired": "— select type",
     "stats": {
       "clients": "clients",
       "years": "years experience",
@@ -175,7 +176,16 @@
       "submit": "Send Request",
       "sending": "Sending...",
       "success": "Thank you! We'll call back within 15 minutes.",
-      "error": "Send error. Please call us: +7 707 709-74-22"
+      "error": "Send error. Please call us: +7 707 709-74-22",
+      "serviceRequired": "— select a service",
+      "serviceOptions": {
+        "apartment": "Apartment Move",
+        "office": "Office Move",
+        "international": "International",
+        "rigging": "Rigging",
+        "packing": "Packing",
+        "storage": "Storage"
+      }
     }
   },
   "footer": {

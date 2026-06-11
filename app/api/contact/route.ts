@@ -9,6 +9,10 @@ const ratelimit = new Ratelimit({
   prefix: 'grandpro:contact',
 })
 
+const VALID_SERVICES = new Set([
+  'apartment', 'office', 'international', 'rigging', 'packing', 'storage',
+])
+
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
@@ -34,7 +38,12 @@ export async function POST(request: NextRequest) {
     if (name.length > 200 || phone.length > 50) {
       return NextResponse.json({ error: 'Input too long' }, { status: 400 })
     }
-    const safeService = typeof service === 'string' ? service : undefined
+
+    // enum validation for service
+    const safeService = typeof service === 'string' && VALID_SERVICES.has(service)
+      ? service
+      : undefined
+
     const safeMessage = typeof message === 'string' ? message : undefined
 
     await sendContactEmail({ name, phone, service: safeService, message: safeMessage })
