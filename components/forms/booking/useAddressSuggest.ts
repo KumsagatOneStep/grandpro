@@ -43,6 +43,8 @@ export function useAddressSuggest(query: string): {
     }
 
     if (timerRef.current) clearTimeout(timerRef.current)
+    setSuggestions([])
+    setLoading(true)
 
     timerRef.current = setTimeout(async () => {
       if (abortRef.current) abortRef.current.abort()

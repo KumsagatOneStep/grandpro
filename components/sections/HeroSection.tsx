@@ -11,25 +11,29 @@ export function HeroSection() {
       className="min-h-screen flex items-center relative pt-32 pb-16 overflow-hidden"
       style={{ background: 'var(--gradient-hero)' }}
     >
-      {/* Decorative blobs */}
+      {/* Decorative blobs — isolated container forces iOS Safari to respect overflow clip on filter layers */}
       <div
-        className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
+        className="absolute inset-0 overflow-hidden pointer-events-none"
         aria-hidden="true"
-        style={{
-          background: 'radial-gradient(ellipse at 80% 20%, rgba(14,165,233,0.18) 0%, transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'float-blob 10s ease-in-out infinite',
-        }}
-      />
-      <div
-        className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
-        aria-hidden="true"
-        style={{
-          background: 'radial-gradient(ellipse at 20% 80%, rgba(34,211,238,0.1) 0%, transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'float-blob 14s ease-in-out infinite reverse',
-        }}
-      />
+        style={{ transform: 'translateZ(0)' }}
+      >
+        <div
+          className="absolute top-0 right-0 w-[700px] h-[700px]"
+          style={{
+            background: 'radial-gradient(ellipse at 80% 20%, rgba(14,165,233,0.18) 0%, transparent 60%)',
+            filter: 'blur(40px)',
+            animation: 'float-blob 10s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-[500px] h-[500px]"
+          style={{
+            background: 'radial-gradient(ellipse at 20% 80%, rgba(34,211,238,0.1) 0%, transparent 60%)',
+            filter: 'blur(40px)',
+            animation: 'float-blob 14s ease-in-out infinite reverse',
+          }}
+        />
+      </div>
 
       {/* Fine dot grid */}
       <div

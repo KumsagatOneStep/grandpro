@@ -89,6 +89,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${theme} ${lexend.variable} ${sourceSans.variable}`} suppressHydrationWarning>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* JSON-LD structured data — native <script> per Next.js 16 docs recommendation */}
         <script
           type="application/ld+json"
