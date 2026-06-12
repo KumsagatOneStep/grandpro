@@ -47,20 +47,35 @@ function ScrollDrum({
   format: (v: number) => string
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isScrollingFromClick = useRef(false)
 
-  useEffect(() => {
+  // item[k] is centred when scrollTop = k * ITEM_H (padding offset cancels)
+  const scrollToIndex = (idx: number, smooth = false) => {
     if (!containerRef.current) return
+    containerRef.current.scrollTo({
+      top: Math.max(0, idx) * ITEM_H,
+      behavior: smooth ? 'smooth' : 'instant',
+    })
+  }
+
+  // Initialise position on mount
+  useEffect(() => {
     const idx = items.indexOf(value)
-    if (idx >= 0) {
-      containerRef.current.scrollTop = Math.max(0, (idx - 2)) * ITEM_H
-    }
+    scrollToIndex(idx)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Scroll to new position whenever value changes (e.g. via click)
+  useEffect(() => {
+    const idx = items.indexOf(value)
+    scrollToIndex(idx, true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+
   const handleScroll = () => {
-    if (!containerRef.current) return
+    if (!containerRef.current || isScrollingFromClick.current) return
     const rawIdx = Math.round(containerRef.current.scrollTop / ITEM_H)
-    const clamped = Math.max(0, Math.min(items.length - 1, rawIdx + 2))
+    const clamped = Math.max(0, Math.min(items.length - 1, rawIdx))
     if (items[clamped] !== undefined && items[clamped] !== value) {
       onChange(items[clamped])
     }

@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from 'next-intl'
 import { MapPin, Building2 } from 'lucide-react'
 import type { Suggestion } from './useAddressSuggest'
 
@@ -11,6 +12,8 @@ interface SuggestionListProps {
 const POI_TYPES = new Set(['poi', 'building', 'adm_div', 'branch'])
 
 export function SuggestionList({ suggestions, loading, onSelect }: SuggestionListProps) {
+  const t = useTranslations('booking')
+
   if (loading) {
     return (
       <div className="flex flex-col gap-2 p-3">
@@ -31,7 +34,7 @@ export function SuggestionList({ suggestions, loading, onSelect }: SuggestionLis
         className="flex items-center justify-center h-24 text-sm"
         style={{ color: 'var(--color-text-muted)' }}
       >
-        Адрес не найден
+        {t('addressNotFound')}
       </div>
     )
   }

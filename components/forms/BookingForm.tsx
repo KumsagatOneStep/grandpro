@@ -153,9 +153,9 @@ export function BookingForm() {
       <div className="space-y-3">
 
         {/* ── Address row ── */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 min-w-0">
           <button
-            style={{ ...rowStyle, flex: 1 }}
+            style={{ ...rowStyle, flex: 1, width: 'auto', minWidth: 0 }}
             onClick={() => setActiveDrawer('address')}
             onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
             onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
@@ -190,7 +190,7 @@ export function BookingForm() {
           </button>
 
           <button
-            style={{ ...rowStyle, flex: 1 }}
+            style={{ ...rowStyle, flex: 1, width: 'auto', minWidth: 0 }}
             onClick={() => setActiveDrawer('address')}
             onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
             onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}

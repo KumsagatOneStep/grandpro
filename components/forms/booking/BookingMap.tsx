@@ -83,6 +83,8 @@ export function BookingMap({ fromPoint, toPoint, containerId = 'booking-route-ma
       })
     }
 
+    let cleanupPoll: (() => void) | undefined
+
     if ((window as any).DG) {
       init()
     } else if (!document.getElementById(SCRIPT_ID)) {
@@ -98,10 +100,11 @@ export function BookingMap({ fromPoint, toPoint, containerId = 'booking-route-ma
         if ((window as any).DG) { clearInterval(poll); init() }
         if (attempts >= 40) clearInterval(poll)
       }, 150)
-      return () => clearInterval(poll)
+      cleanupPoll = () => clearInterval(poll)
     }
 
     return () => {
+      cleanupPoll?.()
       clearOverlays()
       if (mapRef.current) {
         try { (mapRef.current as any).remove() } catch {}

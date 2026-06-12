@@ -34,9 +34,8 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
   const { suggestions: fromSuggestions, loading: fromLoading } = useAddressSuggest(fromQuery)
   const { suggestions: toSuggestions, loading: toLoading } = useAddressSuggest(toQuery)
 
-  const activeSuggestions = activeField === 'from' ? fromSuggestions : toSuggestions
-  const activeLoading = activeField === 'from' ? fromLoading : toLoading
-  const showSuggestions = activeField !== null && (activeLoading || activeSuggestions.length > 0 || (activeField === 'from' ? from : to).trim().length >= 2)
+  const showFrom = activeField === 'from' && (fromLoading || fromSuggestions.length > 0 || from.trim().length >= 2)
+  const showTo = activeField === 'to' && (toLoading || toSuggestions.length > 0 || to.trim().length >= 2)
 
   const handleSelect = (s: Suggestion) => {
     if (activeField === 'from') {
@@ -63,25 +62,13 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
     transition: 'border-color 0.2s',
   } as React.CSSProperties
 
-  const rightPanelContent = showSuggestions ? (
-    <div className="flex flex-col h-full" style={{ background: 'var(--bg-surface)' }}>
-      <div
-        className="px-4 py-3 text-xs font-semibold uppercase tracking-wide flex-shrink-0"
-        style={{ color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-border)' }}
-      >
-        Подсказки 2GIS
-      </div>
-      <div className="flex-1 overflow-y-auto">
-        <SuggestionList
-          suggestions={activeSuggestions}
-          loading={activeLoading}
-          onSelect={handleSelect}
-        />
-      </div>
-    </div>
-  ) : (
-    <BookingMap fromPoint={fromPoint} toPoint={toPoint} />
-  )
+  const dropdownStyle = {
+    top: '100%',
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--color-border)',
+    borderTop: 'none',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+  } as React.CSSProperties
 
   return (
     <AnimatePresence>
@@ -103,7 +90,7 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
             exit={{ x: -40, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="relative flex flex-col w-full md:max-w-[480px]"
-            style={{ background: 'var(--bg-surface)', boxShadow: '4px 0 40px rgba(0,0,0,0.3)' }}
+            style={{ background: 'var(--bg-surface)', boxShadow: '4px 0 40px rgba(0,0,0,0.3)', overflowY: 'auto' }}
           >
             {/* Header */}
             <div
@@ -154,20 +141,12 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
                     style={{
                       ...inputStyle,
                       borderColor: activeField === 'from' ? 'var(--color-primary)' : 'var(--color-border)',
+                      borderBottomLeftRadius: showFrom ? 0 : '0.75rem',
+                      borderBottomRightRadius: showFrom ? 0 : '0.75rem',
                     }}
                   />
-                  {/* Mobile: dropdown suggestion list */}
-                  {activeField === 'from' && showSuggestions && (
-                    <div
-                      className="md:hidden absolute left-0 right-0 z-10 rounded-b-xl overflow-hidden"
-                      style={{
-                        top: '100%',
-                        background: 'var(--bg-surface)',
-                        border: '1px solid var(--color-border)',
-                        borderTop: 'none',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                      }}
-                    >
+                  {showFrom && (
+                    <div className="absolute left-0 right-0 z-50 rounded-b-xl overflow-hidden" style={dropdownStyle}>
                       <SuggestionList
                         suggestions={fromSuggestions}
                         loading={fromLoading}
@@ -208,20 +187,12 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
                     style={{
                       ...inputStyle,
                       borderColor: activeField === 'to' ? 'var(--color-primary)' : 'var(--color-border)',
+                      borderBottomLeftRadius: showTo ? 0 : '0.75rem',
+                      borderBottomRightRadius: showTo ? 0 : '0.75rem',
                     }}
                   />
-                  {/* Mobile: dropdown suggestion list */}
-                  {activeField === 'to' && showSuggestions && (
-                    <div
-                      className="md:hidden absolute left-0 right-0 z-10 rounded-b-xl overflow-hidden"
-                      style={{
-                        top: '100%',
-                        background: 'var(--bg-surface)',
-                        border: '1px solid var(--color-border)',
-                        borderTop: 'none',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                      }}
-                    >
+                  {showTo && (
+                    <div className="absolute left-0 right-0 z-50 rounded-b-xl overflow-hidden" style={dropdownStyle}>
                       <SuggestionList
                         suggestions={toSuggestions}
                         loading={toLoading}
@@ -246,7 +217,7 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
             {/* Mobile: map below inputs */}
             <div
               className="md:hidden flex-1 relative overflow-hidden"
-              style={{ minHeight: '40vh' }}
+              style={{ minHeight: '40vh', zIndex: 0 }}
             >
               <BookingMap fromPoint={fromPoint} toPoint={toPoint} containerId="booking-route-map-mobile" />
             </div>
@@ -278,19 +249,10 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
             </div>
           </motion.div>
 
-          {/* Desktop: right panel — suggestions or map */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={showSuggestions ? 'suggestions' : 'map'}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="hidden md:flex flex-1 relative overflow-hidden"
-            >
-              {rightPanelContent}
-            </motion.div>
-          </AnimatePresence>
+          {/* Desktop: right panel — always map */}
+          <div className="hidden md:flex flex-1 relative overflow-hidden" style={{ zIndex: 0 }}>
+            <BookingMap fromPoint={fromPoint} toPoint={toPoint} />
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
