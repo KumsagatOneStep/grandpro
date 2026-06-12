@@ -133,6 +133,7 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
                   />
                   <input
                     type="text"
+                    autoComplete="off"
                     value={from}
                     onChange={e => setFrom(e.target.value)}
                     onFocus={() => setActiveField('from')}
@@ -179,6 +180,7 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
                   <input
                     ref={toInputRef}
                     type="text"
+                    autoComplete="off"
                     value={to}
                     onChange={e => setTo(e.target.value)}
                     onFocus={() => setActiveField('to')}
