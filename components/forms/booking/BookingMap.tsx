@@ -4,8 +4,63 @@ import { useEffect, useRef } from 'react'
 const CONTAINER_ID = 'booking-route-map'
 const SCRIPT_ID = '2gis-api'
 
-export function BookingMap() {
-  const mapRef = useRef<unknown>(null)
+export interface MapPoint {
+  lat: number
+  lon: number
+}
+
+interface BookingMapProps {
+  fromPoint?: MapPoint
+  toPoint?: MapPoint
+}
+
+export function BookingMap({ fromPoint, toPoint }: BookingMapProps) {
+  const mapRef = useRef<any>(null)
+  const markersRef = useRef<any[]>([])
+  const polylineRef = useRef<any>(null)
+
+  const getMap = () => mapRef.current
+
+  const clearOverlays = () => {
+    markersRef.current.forEach(m => { try { m.remove() } catch {} })
+    markersRef.current = []
+    if (polylineRef.current) {
+      try { polylineRef.current.remove() } catch {}
+      polylineRef.current = null
+    }
+  }
+
+  const drawOverlays = () => {
+    const map = getMap()
+    if (!map) return
+    const DG = (window as any).DG
+    if (!DG) return
+
+    clearOverlays()
+
+    const points: [number, number][] = []
+
+    if (fromPoint) {
+      const m = DG.marker([fromPoint.lat, fromPoint.lon]).addTo(map)
+      markersRef.current.push(m)
+      points.push([fromPoint.lat, fromPoint.lon])
+    }
+    if (toPoint) {
+      const m = DG.marker([toPoint.lat, toPoint.lon]).addTo(map)
+      markersRef.current.push(m)
+      points.push([toPoint.lat, toPoint.lon])
+    }
+    if (points.length === 2) {
+      polylineRef.current = DG.polyline(points, {
+        color: '#0ea5e9',
+        weight: 3,
+        opacity: 0.8,
+      }).addTo(map)
+      map.fitBounds(DG.latLngBounds(points), { padding: [40, 40] })
+    } else if (points.length === 1) {
+      map.setView(points[0], 15)
+    }
+  }
 
   useEffect(() => {
     if (mapRef.current) return
@@ -24,6 +79,7 @@ export function BookingMap() {
           fullscreenControl: false,
           zoomControl: true,
         })
+        drawOverlays()
       })
     }
 
@@ -46,12 +102,20 @@ export function BookingMap() {
     }
 
     return () => {
+      clearOverlays()
       if (mapRef.current) {
         try { (mapRef.current as any).remove() } catch {}
         mapRef.current = null
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Re-draw overlays whenever points change
+  useEffect(() => {
+    drawOverlays()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromPoint?.lat, fromPoint?.lon, toPoint?.lat, toPoint?.lon])
 
   return (
     <div
