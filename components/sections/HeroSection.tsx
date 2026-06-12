@@ -8,7 +8,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="min-h-screen flex items-center relative pt-32 pb-16 overflow-hidden"
+      className="min-h-screen flex items-center relative pt-20 sm:pt-24 lg:pt-32 pb-10 sm:pb-12 lg:pb-16 overflow-hidden"
       style={{ background: 'var(--gradient-hero)' }}
     >
       {/* Decorative blobs — isolated container forces iOS Safari to respect overflow clip on filter layers */}
@@ -75,7 +75,7 @@ export function HeroSection() {
             </div>
 
             <h1
-              className="font-heading text-4xl md:text-5xl lg:text-[3.75rem] font-extrabold leading-[1.1] tracking-tight mb-6"
+              className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.75rem] font-extrabold leading-[1.1] tracking-tight mb-6"
               style={{ color: 'var(--color-text)' }}
             >
               {t('title')}{' '}
@@ -92,17 +92,17 @@ export function HeroSection() {
             </h1>
 
             <p
-              className="text-lg leading-relaxed mb-9 max-w-xl"
+              className="text-sm sm:text-base lg:text-lg leading-relaxed mb-9 sm:max-w-xl"
               style={{ color: 'var(--color-text-muted)' }}
             >
               {t('subtitle')}
             </p>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <a
                 href="#calculator"
-                className="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-bold text-white
-                  transition-all duration-200 hover:-translate-y-1 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-bold text-white
+                  w-full sm:w-auto transition-all duration-200 hover:-translate-y-1 cursor-pointer"
                 style={{
                   background: 'var(--gradient-primary)',
                   boxShadow: '0 4px 24px rgba(14,165,233,0.35)',
@@ -115,8 +115,8 @@ export function HeroSection() {
               </a>
               <a
                 href="#services"
-                className="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-bold
-                  transition-all duration-200 hover:-translate-y-1 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-bold
+                  w-full sm:w-auto transition-all duration-200 hover:-translate-y-1 cursor-pointer"
                 style={{
                   background: 'var(--bg-surface)',
                   border: '1px solid var(--color-border)',
@@ -141,7 +141,7 @@ export function HeroSection() {
               ].map((stat, i) => (
                 <div key={i} className="group">
                   <p
-                    className="font-heading text-3xl font-extrabold tracking-tight"
+                    className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight"
                     style={{
                       background: 'var(--gradient-primary)',
                       WebkitBackgroundClip: 'text',

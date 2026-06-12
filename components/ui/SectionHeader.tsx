@@ -11,14 +11,14 @@ interface SectionHeaderProps {
 export function SectionHeader({ title, subtitle, className, align = 'center' }: SectionHeaderProps) {
   return (
     <motion.div
-      className={`mb-16 ${align === 'center' ? 'text-center' : ''} ${className ?? ''}`}
+      className={`mb-10 sm:mb-16 ${align === 'center' ? 'text-center' : ''} ${className ?? ''}`}
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
     >
       <h2
-        className="font-heading text-3xl md:text-4xl lg:text-[2.6rem] font-bold tracking-tight mb-4 inline-block relative"
+        className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-4 inline-block relative"
         style={{ color: 'var(--color-text)' }}
       >
         {title}
@@ -37,7 +37,7 @@ export function SectionHeader({ title, subtitle, className, align = 'center' }: 
       </h2>
       {subtitle && (
         <motion.p
-          className={`text-lg leading-relaxed mt-7 ${align === 'center' ? 'max-w-2xl mx-auto' : 'max-w-2xl'}`}
+          className={`text-sm sm:text-base lg:text-lg leading-relaxed mt-7 ${align === 'center' ? 'max-w-2xl mx-auto' : 'max-w-2xl'}`}
           style={{ color: 'var(--color-text-muted)' }}
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}

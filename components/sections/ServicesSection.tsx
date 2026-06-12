@@ -40,7 +40,7 @@ export function ServicesSection() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: '-40px' }}
-                className="group relative flex flex-col overflow-hidden rounded-2xl p-8
+                className="group relative flex flex-col overflow-hidden rounded-2xl p-5 sm:p-8
                   transition-all duration-300 hover:-translate-y-2 cursor-pointer"
                 style={{
                   background: 'var(--bg-surface)',

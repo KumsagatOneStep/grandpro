@@ -137,7 +137,7 @@ export function BookingForm() {
 
   return (
     <div
-      className="relative p-5 rounded-2xl"
+      className="relative p-4 sm:p-5 rounded-2xl"
       style={{
         background: 'var(--glass-bg)',
         backdropFilter: 'blur(20px)',
@@ -146,16 +146,17 @@ export function BookingForm() {
         boxShadow: '0 20px 60px var(--shadow-main)',
       }}
     >
-      <h3 className="font-heading text-lg font-bold mb-4" style={{ color: 'var(--color-text)' }}>
+      <h3 className="font-heading text-base sm:text-lg font-bold mb-4" style={{ color: 'var(--color-text)' }}>
         {t('formTitle')}
       </h3>
 
       <div className="space-y-3">
 
         {/* ── Address row ── */}
-        <div className="flex gap-2 min-w-0">
+        <div className="flex flex-col sm:flex-row gap-2 min-w-0">
           <button
-            style={{ ...rowStyle, flex: 1, width: 'auto', minWidth: 0 }}
+            style={{ ...rowStyle, minWidth: 0 }}
+            className="w-full sm:flex-1 sm:w-auto"
             onClick={() => setActiveDrawer('address')}
             onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
             onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
@@ -176,7 +177,7 @@ export function BookingForm() {
 
           <button
             onClick={() => setActiveDrawer('address')}
-            className="w-9 flex items-center justify-center rounded-xl cursor-pointer flex-shrink-0 transition-colors"
+            className="w-9 flex items-center justify-center rounded-xl cursor-pointer flex-shrink-0 self-center sm:self-stretch transition-colors"
             style={{
               background: 'var(--bg-main)',
               border: '1px solid var(--color-border)',
@@ -190,7 +191,8 @@ export function BookingForm() {
           </button>
 
           <button
-            style={{ ...rowStyle, flex: 1, width: 'auto', minWidth: 0 }}
+            style={{ ...rowStyle, minWidth: 0 }}
+            className="w-full sm:flex-1 sm:w-auto"
             onClick={() => setActiveDrawer('address')}
             onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
             onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
