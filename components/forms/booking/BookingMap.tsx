@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useRef } from 'react'
 
-const CONTAINER_ID = 'booking-route-map'
 const SCRIPT_ID = '2gis-api'
 
 export interface MapPoint {
@@ -12,9 +11,10 @@ export interface MapPoint {
 interface BookingMapProps {
   fromPoint?: MapPoint
   toPoint?: MapPoint
+  containerId?: string
 }
 
-export function BookingMap({ fromPoint, toPoint }: BookingMapProps) {
+export function BookingMap({ fromPoint, toPoint, containerId = 'booking-route-map' }: BookingMapProps) {
   const mapRef = useRef<any>(null)
   const markersRef = useRef<any[]>([])
   const polylineRef = useRef<any>(null)
@@ -71,9 +71,9 @@ export function BookingMap({ fromPoint, toPoint }: BookingMapProps) {
       DG.then(function () {
         const dg = (window as any).DG
         if (!dg || mapRef.current) return
-        const container = document.getElementById(CONTAINER_ID)
+        const container = document.getElementById(containerId)
         if (!container) return
-        mapRef.current = dg.map(CONTAINER_ID, {
+        mapRef.current = dg.map(containerId, {
           center: [43.2220, 76.8512],
           zoom: 12,
           fullscreenControl: false,
@@ -119,7 +119,7 @@ export function BookingMap({ fromPoint, toPoint }: BookingMapProps) {
 
   return (
     <div
-      id={CONTAINER_ID}
+      id={containerId}
       style={{ width: '100%', height: '100%', minHeight: '300px' }}
     />
   )

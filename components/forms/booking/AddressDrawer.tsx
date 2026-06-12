@@ -248,7 +248,7 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
               className="md:hidden flex-1 relative overflow-hidden"
               style={{ minHeight: '40vh' }}
             >
-              <BookingMap fromPoint={fromPoint} toPoint={toPoint} />
+              <BookingMap fromPoint={fromPoint} toPoint={toPoint} containerId="booking-route-map-mobile" />
             </div>
 
             {/* Action buttons */}
