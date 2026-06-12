@@ -1,7 +1,7 @@
 'use client'
 import { useTranslations } from 'next-intl'
 import { ArrowRight, ChevronDown, Shield, Truck, Users, Award, Star } from 'lucide-react'
-import { QuickForm } from '@/components/forms/QuickForm'
+import { BookingForm } from '@/components/forms/BookingForm'
 
 export function HeroSection() {
   const t = useTranslations('hero')
@@ -155,23 +155,9 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right: Quick form */}
+          {/* Right: Booking form */}
           <div className="w-full max-w-md mx-auto lg:mx-0">
-            <div
-              className="p-8 rounded-2xl"
-              style={{
-                background: 'var(--glass-bg)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid var(--glass-border)',
-                boxShadow: '0 20px 60px var(--shadow-main)',
-              }}
-            >
-              <h3 className="font-heading text-xl font-bold mb-6" style={{ color: 'var(--color-text)' }}>
-                {t('formTitle')}
-              </h3>
-              <QuickForm />
-            </div>
+            <BookingForm />
           </div>
         </div>
       </div>

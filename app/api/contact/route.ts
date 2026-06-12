@@ -11,7 +11,7 @@ const ratelimit = new Ratelimit({
 })
 
 const VALID_SERVICES = new Set([
-  'apartment', 'office', 'international', 'rigging', 'packing', 'storage',
+  'apartment', 'office', 'international', 'rigging', 'packing', 'storage', 'booking',
 ])
 
 export async function POST(request: NextRequest) {
@@ -49,7 +49,9 @@ export async function POST(request: NextRequest) {
       ? service
       : undefined
 
-    const safeMessage = typeof message === 'string' ? message : undefined
+    const safeMessage = typeof message === 'string'
+      ? message.slice(0, 3000)
+      : undefined
 
     await sendContactEmail({ name, phone, service: safeService, message: safeMessage })
     return NextResponse.json({ success: true })
