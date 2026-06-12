@@ -160,7 +160,7 @@ export function HeroSection() {
           </div>
 
           {/* Right: Booking form */}
-          <div className="w-full max-w-md mx-auto lg:mx-0">
+          <div className="w-full min-w-0 max-w-md mx-auto lg:mx-0">
             <BookingForm />
           </div>
         </div>
