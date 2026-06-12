@@ -8,7 +8,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="min-h-screen flex items-center relative pt-20 sm:pt-24 lg:pt-32 pb-10 sm:pb-12 lg:pb-16 overflow-hidden"
+      className="min-h-screen flex items-center relative pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-12 lg:pb-16 overflow-hidden"
       style={{ background: 'var(--gradient-hero)' }}
     >
       {/* Decorative blobs — isolated container forces iOS Safari to respect overflow clip on filter layers */}
