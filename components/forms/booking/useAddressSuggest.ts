@@ -36,12 +36,12 @@ export function useAddressSuggest(query: string): {
     const trimmed = query.trim()
 
     if (trimmed.length < 2) {
+      abortRef.current?.abort()          // abort any in-flight request
+      if (timerRef.current) clearTimeout(timerRef.current)
       setSuggestions([])
       setLoading(false)
       return
     }
-
-    setLoading(true)
 
     if (timerRef.current) clearTimeout(timerRef.current)
 
@@ -56,6 +56,8 @@ export function useAddressSuggest(query: string): {
         setLoading(false)
         return
       }
+
+      setLoading(true)                   // moved here — only set after debounce fires
 
       const params = new URLSearchParams({
         q: trimmed,
