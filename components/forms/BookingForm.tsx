@@ -165,13 +165,13 @@ export function BookingForm() {
         >
           <button
             type="button"
-            className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer"
+            className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer overflow-hidden"
             onClick={() => setActiveDrawer('address')}
           >
-            <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5 truncate" style={{ color: 'var(--color-text-muted)' }}>
               {t('addressFrom')}
             </p>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
               <MapPin size={12} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
               <span
                 className="text-sm font-medium truncate"
@@ -194,13 +194,13 @@ export function BookingForm() {
 
           <button
             type="button"
-            className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer"
+            className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer overflow-hidden"
             onClick={() => setActiveDrawer('address')}
           >
-            <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5 truncate" style={{ color: 'var(--color-text-muted)' }}>
               {t('addressTo')}
             </p>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
               <MapPin size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
               <span
                 className="text-sm font-medium truncate"
