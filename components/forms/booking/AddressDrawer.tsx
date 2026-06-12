@@ -1,9 +1,13 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { X, MapPin, Plus } from 'lucide-react'
+import { X, MapPin, Plus, ArrowRight } from 'lucide-react'
 import { BookingMap } from './BookingMap'
+import { SuggestionList } from './SuggestionList'
+import { useAddressSuggest } from './useAddressSuggest'
+import type { Suggestion } from './useAddressSuggest'
+import type { MapPoint } from './BookingMap'
 
 interface AddressDrawerProps {
   open: boolean
@@ -13,10 +17,39 @@ interface AddressDrawerProps {
   onClose: () => void
 }
 
+type ActiveField = 'from' | 'to' | null
+
 export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose }: AddressDrawerProps) {
   const t = useTranslations('booking')
   const [from, setFrom] = useState(addressFrom)
   const [to, setTo] = useState(addressTo)
+  const [activeField, setActiveField] = useState<ActiveField>(null)
+  const [fromPoint, setFromPoint] = useState<MapPoint | undefined>()
+  const [toPoint, setToPoint] = useState<MapPoint | undefined>()
+  const toInputRef = useRef<HTMLInputElement>(null)
+
+  const fromQuery = activeField === 'from' ? from : ''
+  const toQuery = activeField === 'to' ? to : ''
+
+  const { suggestions: fromSuggestions, loading: fromLoading } = useAddressSuggest(fromQuery)
+  const { suggestions: toSuggestions, loading: toLoading } = useAddressSuggest(toQuery)
+
+  const activeSuggestions = activeField === 'from' ? fromSuggestions : toSuggestions
+  const activeLoading = activeField === 'from' ? fromLoading : toLoading
+  const showSuggestions = activeField !== null && (activeLoading || activeSuggestions.length > 0 || (activeField === 'from' ? from : to).trim().length >= 2)
+
+  const handleSelect = (s: Suggestion) => {
+    if (activeField === 'from') {
+      setFrom(s.fullName)
+      if (s.lat && s.lon) setFromPoint({ lat: s.lat, lon: s.lon })
+      setActiveField('to')
+      setTimeout(() => toInputRef.current?.focus(), 50)
+    } else {
+      setTo(s.fullName)
+      if (s.lat && s.lon) setToPoint({ lat: s.lat, lon: s.lon })
+      setActiveField(null)
+    }
+  }
 
   const inputStyle = {
     width: '100%',
@@ -29,6 +62,26 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
     fontSize: '0.9375rem',
     transition: 'border-color 0.2s',
   } as React.CSSProperties
+
+  const rightPanelContent = showSuggestions ? (
+    <div className="flex flex-col h-full" style={{ background: 'var(--bg-surface)' }}>
+      <div
+        className="px-4 py-3 text-xs font-semibold uppercase tracking-wide flex-shrink-0"
+        style={{ color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-border)' }}
+      >
+        Подсказки 2GIS
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        <SuggestionList
+          suggestions={activeSuggestions}
+          loading={activeLoading}
+          onSelect={handleSelect}
+        />
+      </div>
+    </div>
+  ) : (
+    <BookingMap fromPoint={fromPoint} toPoint={toPoint} />
+  )
 
   return (
     <AnimatePresence>
@@ -43,21 +96,18 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
           style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
           onClick={e => { if (e.target === e.currentTarget) onClose() }}
         >
-          {/* Left panel */}
+          {/* Left / main panel */}
           <motion.div
             initial={{ x: -40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="relative flex flex-col w-full max-w-[480px]"
-            style={{
-              background: 'var(--bg-surface)',
-              boxShadow: '4px 0 40px rgba(0,0,0,0.3)',
-            }}
+            className="relative flex flex-col w-full md:max-w-[480px]"
+            style={{ background: 'var(--bg-surface)', boxShadow: '4px 0 40px rgba(0,0,0,0.3)' }}
           >
             {/* Header */}
             <div
-              className="flex items-center justify-between px-6 py-4"
+              className="flex items-center justify-between px-6 py-4 flex-shrink-0"
               style={{ borderBottom: '1px solid var(--color-border)' }}
             >
               <span className="font-heading font-bold text-lg" style={{ color: 'var(--color-text)' }}>
@@ -73,8 +123,8 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
               </button>
             </div>
 
-            {/* Address inputs */}
-            <div className="flex-1 px-6 py-5 space-y-4 overflow-y-auto">
+            {/* Inputs */}
+            <div className="px-6 py-5 space-y-4 flex-shrink-0">
               {/* From */}
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
@@ -98,11 +148,33 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
                     type="text"
                     value={from}
                     onChange={e => setFrom(e.target.value)}
+                    onFocus={() => setActiveField('from')}
+                    onBlur={() => setTimeout(() => setActiveField(f => f === 'from' ? null : f), 150)}
                     placeholder={t('addressPlaceholderFrom')}
-                    style={inputStyle}
-                    onFocus={e => (e.target.style.borderColor = 'var(--color-primary)')}
-                    onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
+                    style={{
+                      ...inputStyle,
+                      borderColor: activeField === 'from' ? 'var(--color-primary)' : 'var(--color-border)',
+                    }}
                   />
+                  {/* Mobile: dropdown suggestion list */}
+                  {activeField === 'from' && showSuggestions && (
+                    <div
+                      className="md:hidden absolute left-0 right-0 z-10 rounded-b-xl overflow-hidden"
+                      style={{
+                        top: '100%',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderTop: 'none',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                      }}
+                    >
+                      <SuggestionList
+                        suggestions={fromSuggestions}
+                        loading={fromLoading}
+                        onSelect={handleSelect}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -126,18 +198,40 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
                     style={{ color: 'var(--color-text-muted)' }}
                   />
                   <input
+                    ref={toInputRef}
                     type="text"
                     value={to}
                     onChange={e => setTo(e.target.value)}
+                    onFocus={() => setActiveField('to')}
+                    onBlur={() => setTimeout(() => setActiveField(f => f === 'to' ? null : f), 150)}
                     placeholder={t('addressPlaceholderTo')}
-                    style={inputStyle}
-                    onFocus={e => (e.target.style.borderColor = 'var(--color-primary)')}
-                    onBlur={e => (e.target.style.borderColor = 'var(--color-border)')}
+                    style={{
+                      ...inputStyle,
+                      borderColor: activeField === 'to' ? 'var(--color-primary)' : 'var(--color-border)',
+                    }}
                   />
+                  {/* Mobile: dropdown suggestion list */}
+                  {activeField === 'to' && showSuggestions && (
+                    <div
+                      className="md:hidden absolute left-0 right-0 z-10 rounded-b-xl overflow-hidden"
+                      style={{
+                        top: '100%',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderTop: 'none',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                      }}
+                    >
+                      <SuggestionList
+                        suggestions={toSuggestions}
+                        loading={toLoading}
+                        onSelect={handleSelect}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Add stop hint */}
               <button
                 className="flex items-center gap-2 text-sm cursor-pointer transition-colors"
                 style={{ color: 'var(--color-text-muted)' }}
@@ -149,17 +243,26 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
               </button>
             </div>
 
+            {/* Mobile: map below inputs */}
+            <div
+              className="md:hidden flex-1 relative overflow-hidden"
+              style={{ minHeight: '40vh' }}
+            >
+              <BookingMap fromPoint={fromPoint} toPoint={toPoint} />
+            </div>
+
             {/* Action buttons */}
             <div
-              className="px-6 py-4 flex gap-3"
+              className="px-6 py-4 flex gap-3 flex-shrink-0"
               style={{ borderTop: '1px solid var(--color-border)' }}
             >
               <button
                 onClick={() => onConfirm(from, to)}
-                className="flex-1 py-3 rounded-xl font-bold text-white cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
+                className="flex-1 py-3 rounded-xl font-bold text-white cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2"
                 style={{ background: 'var(--gradient-primary)', boxShadow: '0 4px 16px rgba(14,165,233,0.3)' }}
               >
                 {t('confirm')}
+                <ArrowRight size={16} />
               </button>
               <button
                 onClick={onClose}
@@ -175,10 +278,19 @@ export function AddressDrawer({ open, addressFrom, addressTo, onConfirm, onClose
             </div>
           </motion.div>
 
-          {/* Right: map — hidden on mobile */}
-          <div className="hidden md:flex flex-1 relative overflow-hidden">
-            <BookingMap />
-          </div>
+          {/* Desktop: right panel — suggestions or map */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={showSuggestions ? 'suggestions' : 'map'}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="hidden md:flex flex-1 relative overflow-hidden"
+            >
+              {rightPanelContent}
+            </motion.div>
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>
