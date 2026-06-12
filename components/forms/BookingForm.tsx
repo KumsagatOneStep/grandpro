@@ -154,7 +154,7 @@ export function BookingForm() {
 
         {/* ── Address row — single container ── */}
         <div
-          className="flex items-stretch rounded-xl overflow-hidden transition-colors"
+          className="flex items-stretch transition-colors min-w-0 w-full"
           style={{
             background: 'var(--bg-main)',
             border: '1px solid var(--color-border)',
@@ -164,6 +164,7 @@ export function BookingForm() {
           onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
         >
           <button
+            type="button"
             className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer"
             onClick={() => setActiveDrawer('address')}
           >
@@ -182,6 +183,7 @@ export function BookingForm() {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveDrawer('address')}
             className="w-8 flex items-center justify-center flex-shrink-0 cursor-pointer"
             style={{ borderLeft: '1px solid var(--color-border)', borderRight: '1px solid var(--color-border)' }}
@@ -191,6 +193,7 @@ export function BookingForm() {
           </button>
 
           <button
+            type="button"
             className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer"
             onClick={() => setActiveDrawer('address')}
           >
