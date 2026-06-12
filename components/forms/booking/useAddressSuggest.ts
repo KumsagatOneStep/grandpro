@@ -20,8 +20,7 @@ interface SuggestResponse {
   result?: { items?: SuggestItem[] }
 }
 
-const SUGGEST_URL = 'https://suggest-api.2gis.com/1.0'
-const REGION_ID = '68' // Almaty
+const SUGGEST_URL = 'https://catalog.api.2gis.com/3.0/suggests'
 
 export function useAddressSuggest(query: string): {
   suggestions: Suggestion[]
@@ -63,7 +62,6 @@ export function useAddressSuggest(query: string): {
         q: trimmed,
         key,
         locale: 'ru_RU',
-        region_id: REGION_ID,
         fields: 'items.point,items.full_name',
         limit: '5',
       })
