@@ -152,20 +152,26 @@ export function BookingForm() {
 
       <div className="space-y-3">
 
-        {/* ── Address row ── */}
-        <div className="flex flex-col sm:flex-row gap-2 min-w-0">
+        {/* ── Address row — single container ── */}
+        <div
+          className="flex items-stretch rounded-xl overflow-hidden transition-colors"
+          style={{
+            background: 'var(--bg-main)',
+            border: '1px solid var(--color-border)',
+            borderRadius: '0.875rem',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
+          onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
+        >
           <button
-            style={{ ...rowStyle, minWidth: 0 }}
-            className="w-full sm:flex-1 sm:w-auto"
+            className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer"
             onClick={() => setActiveDrawer('address')}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: 'var(--color-text-muted)' }}>
               {t('addressFrom')}
             </p>
-            <div className="flex items-center gap-2">
-              <MapPin size={13} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
+            <div className="flex items-center gap-1.5">
+              <MapPin size={12} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
               <span
                 className="text-sm font-medium truncate"
                 style={{ color: state.addressFrom ? 'var(--color-text)' : 'var(--color-text-muted)' }}
@@ -177,31 +183,22 @@ export function BookingForm() {
 
           <button
             onClick={() => setActiveDrawer('address')}
-            className="w-9 flex items-center justify-center rounded-xl cursor-pointer flex-shrink-0 self-center sm:self-stretch transition-colors"
-            style={{
-              background: 'var(--bg-main)',
-              border: '1px solid var(--color-border)',
-              minHeight: 60,
-            }}
+            className="w-8 flex items-center justify-center flex-shrink-0 cursor-pointer"
+            style={{ borderLeft: '1px solid var(--color-border)', borderRight: '1px solid var(--color-border)' }}
             aria-label="Open address editor"
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
           >
             <ArrowLeftRight size={13} style={{ color: 'var(--color-text-muted)' }} />
           </button>
 
           <button
-            style={{ ...rowStyle, minWidth: 0 }}
-            className="w-full sm:flex-1 sm:w-auto"
+            className="flex-1 min-w-0 px-3 py-3 text-left cursor-pointer"
             onClick={() => setActiveDrawer('address')}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: 'var(--color-text-muted)' }}>
               {t('addressTo')}
             </p>
-            <div className="flex items-center gap-2">
-              <MapPin size={13} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+            <div className="flex items-center gap-1.5">
+              <MapPin size={12} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
               <span
                 className="text-sm font-medium truncate"
                 style={{ color: state.addressTo ? 'var(--color-text)' : 'var(--color-text-muted)' }}
