@@ -18,7 +18,7 @@ const CSP = [
   // Google Fonts files
   "font-src 'self' fonts.gstatic.com data:",
   // Next.js image optimization + 2GIS map tiles and icons
-  "img-src 'self' data: blob: *.2gis.ru *.2gis.com",
+  "img-src 'self' data: blob: *.2gis.ru *.2gis.com t2.gstatic.com",
   // 2GIS API requests and map data
   "connect-src 'self' *.2gis.ru *.2gis.com",
   // 2GIS SDK may spawn web workers
