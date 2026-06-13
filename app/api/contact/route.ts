@@ -14,7 +14,7 @@ function getRatelimit() {
 }
 
 const VALID_SERVICES = new Set([
-  'apartment', 'office', 'international', 'rigging', 'packing', 'storage', 'booking',
+  'apartment', 'office', 'cargo', 'international', 'rigging', 'packing', 'storage', 'booking',
 ])
 
 export async function POST(request: NextRequest) {

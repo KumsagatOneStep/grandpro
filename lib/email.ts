@@ -126,12 +126,12 @@ export async function sendServiceRequestEmail(data: ServiceRequestData) {
     typeRows.push(row('Крупногабаритные', yn(data.heavyItems)))
   }
 
-  // Floor rows for types that have them
-  if (['apartment', 'office'].includes(type)) {
-    if (data.floorFrom || data.liftFrom != null)
-      typeRows.push(row('Этаж (погрузка)', `${orDash(data.floorFrom)} ${data.liftFrom ? '(лифт ✅)' : '(лифта нет)'}`))
-    if (data.floorToNum || data.liftTo != null)
-      typeRows.push(row('Этаж (выгрузка)', `${orDash(data.floorToNum)} ${data.liftTo ? '(лифт ✅)' : '(лифта нет)'}`))
+  // Floor rows for types that collect floor data
+  if (['apartment', 'office', 'rigging'].includes(type)) {
+    if (data.floorFrom)
+      typeRows.push(row('Этаж (погрузка)', `${esc(data.floorFrom)} ${data.liftFrom ? '(лифт ✅)' : '(лифта нет)'}`))
+    if (data.floorToNum)
+      typeRows.push(row('Этаж (выгрузка)', `${esc(data.floorToNum)} ${data.liftTo ? '(лифт ✅)' : '(лифта нет)'}`))
   }
 
   const upsellTag = data.upsellType

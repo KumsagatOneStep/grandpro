@@ -227,14 +227,19 @@ function FloorBlock({
 // ─── Dynamic Step 2 content per service type ─────────────────────────────────
 
 function Step2Content({
-  form, set,
-}: { form: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+  form, set, errors,
+}: {
+  form: FormState
+  set: <K extends keyof FormState>(k: K, v: FormState[K]) => void
+  errors: Partial<Record<keyof FormState, string>>
+}) {
   const type = form.serviceType
 
   if (type === 'apartment') return (
     <div className="flex flex-col gap-5">
       <SelectField
         label="Количество комнат" value={form.rooms} onChange={v => set('rooms', v)} required
+        error={errors.rooms}
         options={['1', '2', '3', '4', '5+'].map(v => ({ value: v, label: `${v} комн.` }))}
       />
       <FloorBlock form={form} set={set} />
@@ -297,7 +302,8 @@ function Step2Content({
   if (type === 'international') return (
     <div className="flex flex-col gap-5">
       <InputField label="Страна назначения" value={form.destCountry}
-        onChange={v => set('destCountry', v)} placeholder="напр. Россия, Германия" required />
+        onChange={v => set('destCountry', v)} placeholder="напр. Россия, Германия" required
+        error={errors.destCountry} />
       <div className="grid grid-cols-2 gap-4">
         <InputField label="Объём (м³)" value={form.cargoVolume}
           onChange={v => set('cargoVolume', v)} placeholder="напр. 20" />
@@ -316,7 +322,7 @@ function Step2Content({
     <div className="flex flex-col gap-5">
       <SelectField
         label="Тип оборудования" value={form.equipmentType}
-        onChange={v => set('equipmentType', v)} required
+        onChange={v => set('equipmentType', v)} required error={errors.equipmentType}
         options={[
           { value: 'safe', label: 'Сейф' },
           { value: 'piano', label: 'Пианино / рояль' },
@@ -343,6 +349,7 @@ function Step2Content({
     <div className="flex flex-col gap-5">
       <SelectField
         label="Количество комнат" value={form.rooms} onChange={v => set('rooms', v)} required
+        error={errors.rooms}
         options={['1', '2', '3', '4', '5+'].map(v => ({ value: v, label: `${v} комн.` }))}
       />
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
@@ -377,7 +384,7 @@ function StepIndicator({ step }: { step: WizardStep }) {
           </div>
           {i < 2 && (
             <div className="w-12 h-0.5 rounded-full transition-all duration-300"
-              style={{ background: typeof step === 'number' && step > s + 1 ? 'var(--color-primary)' : 'var(--color-border)' }} />
+              style={{ background: step === 'success' || (typeof step === 'number' && step > s + 1) ? 'var(--color-primary)' : 'var(--color-border)' }} />
           )}
         </div>
       ))}
@@ -403,6 +410,7 @@ export function ServicesPageClient() {
   const [form, setForm] = useState<FormState>(INITIAL)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [addedUpsells, setAddedUpsells] = useState<Set<string>>(new Set())
   const [dismissedUpsells, setDismissedUpsells] = useState<Set<string>>(new Set())
 
@@ -423,6 +431,19 @@ export function ServicesPageClient() {
     return !Object.keys(e).length
   }
 
+  const validateStep2 = () => {
+    const e: typeof errors = {}
+    const type = form.serviceType
+    if ((type === 'apartment' || type === 'packing') && !form.rooms)
+      e.rooms = t('wizard.required')
+    if (type === 'rigging' && !form.equipmentType)
+      e.equipmentType = t('wizard.required')
+    if (type === 'international' && !form.destCountry.trim())
+      e.destCountry = t('wizard.required')
+    setErrors(e)
+    return !Object.keys(e).length
+  }
+
   const validateStep3 = () => {
     const e: typeof errors = {}
     if (!form.name.trim()) e.name = t('wizard.required')
@@ -435,25 +456,38 @@ export function ServicesPageClient() {
   const handleSubmit = async () => {
     if (!validateStep3()) return
     setSubmitting(true)
+    setSubmitError(null)
     try {
-      await fetch('/api/services', {
+      const res = await fetch('/api/services', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form }),
       })
+      if (!res.ok) throw new Error(`${res.status}`)
       setStep('success')
+    } catch {
+      setSubmitError('Не удалось отправить заявку. Попробуйте ещё раз.')
     } finally {
       setSubmitting(false)
     }
   }
 
   const handleAddUpsell = async (id: string) => {
-    await fetch('/api/services', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, clearService: true, upsellType: id }),
-    })
-    setAddedUpsells(s => new Set(s).add(id))
+    try {
+      const res = await fetch('/api/services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          clearService: true,
+          upsellType: id !== 'clear_service' ? id : undefined,
+        }),
+      })
+      if (!res.ok) throw new Error(`${res.status}`)
+      setAddedUpsells(s => new Set(s).add(id))
+    } catch {
+      // don't mark as added on failure
+    }
   }
 
   const serviceTypes: ServiceType[] = ['apartment', 'office', 'cargo', 'international', 'rigging', 'packing']
@@ -586,7 +620,7 @@ export function ServicesPageClient() {
                   </div>
                 )}
 
-                <Step2Content form={form} set={set} />
+                <Step2Content form={form} set={set} errors={errors} />
 
                 <div className="flex gap-3 mt-2">
                   <button type="button" onClick={() => setStep(1)}
@@ -594,7 +628,7 @@ export function ServicesPageClient() {
                     style={{ background: 'var(--bg-surface-elevated)', color: 'var(--color-text-muted)' }}>
                     <ChevronLeft size={18} /> {t('wizard.back')}
                   </button>
-                  <button type="button" onClick={() => setStep(3)}
+                  <button type="button" onClick={() => validateStep2() && setStep(3)}
                     className="flex-1 py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                     style={{ background: 'var(--gradient-primary)' }}>
                     {t('wizard.next')} <ArrowRight size={18} />
@@ -641,6 +675,9 @@ export function ServicesPageClient() {
                     {!submitting && <ArrowRight size={18} />}
                   </button>
                 </div>
+                {submitError && (
+                  <p className="text-sm text-center" style={{ color: '#DC2626' }}>{submitError}</p>
+                )}
               </motion.div>
             )}
 
@@ -724,7 +761,7 @@ export function ServicesPageClient() {
                         )
                       })}
                     </div>
-                  ) : (
+                  ) : !dismissedUpsells.has('clear_service') ? (
                     /* No triggers fired — show general Clear Service */
                     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                       className="rounded-3xl p-6"
@@ -758,7 +795,7 @@ export function ServicesPageClient() {
                         </div>
                       </div>
                     </motion.div>
-                  )
+                  ) : null
                 )}
               </motion.div>
             )}
