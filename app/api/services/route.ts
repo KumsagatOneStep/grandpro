@@ -4,11 +4,14 @@ import { Redis } from '@upstash/redis'
 import { sendServiceRequestEmail } from '@/lib/email'
 import { KZ_PHONE_RE } from '@/lib/validators'
 
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, '60 s'),
-  prefix: 'grandpro:services',
-})
+function getRatelimit() {
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) return null
+  return new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(5, '60 s'),
+    prefix: 'grandpro:services',
+  })
+}
 
 const VALID_SERVICE_TYPES = new Set([
   'apartment', 'office', 'cargo', 'international', 'rigging', 'packing',
@@ -17,13 +20,12 @@ const VALID_SERVICE_TYPES = new Set([
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
-  try {
-    const { success } = await ratelimit.limit(ip)
+  const rl = getRatelimit()
+  if (rl) {
+    const { success } = await rl.limit(ip)
     if (!success) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
-  } catch (e) {
-    console.warn('Rate limiter unavailable:', e)
   }
 
   try {
