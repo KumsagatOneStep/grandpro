@@ -1,12 +1,95 @@
 {
   "nav": {
     "services": "Services",
-    "calculator": "Calculator",
+    "storage": "Storage",
+    "packing": "Packing",
+    "partners": "Partners",
     "about": "About",
-    "gallery": "Gallery",
-    "reviews": "Reviews",
-    "contacts": "Contacts",
     "callUs": "Call Us"
+  },
+  "servicesPage": {
+    "hero": {
+      "title": "GrandPro Moving Services",
+      "subtitle": "Full-cycle moving — from request to keys in your new home. We work across Almaty and all of Kazakhstan.",
+      "cta": "Get a Quote"
+    },
+    "cards": {
+      "apartment": { "title": "Apartment Moving", "desc": "Packing, transport, setup. Insurance included." },
+      "office":    { "title": "Office Relocation", "desc": "Business moves without downtime. Nights and weekends." },
+      "cargo":     { "title": "Cargo Transport",   "desc": "Any cargo city-wide and beyond. Vans and trucks." },
+      "international": { "title": "International", "desc": "Moves across CIS and abroad. Customs handled." },
+      "rigging":   { "title": "Rigging",           "desc": "Safes, machines, ATMs, heavy equipment." },
+      "packing":   { "title": "Packing",           "desc": "Premium materials. Special boxes for fragile items." }
+    },
+    "wizard": {
+      "title": "Request a Move",
+      "step1": "Move Details",
+      "step2": "Specify Parameters",
+      "step3": "Contact Info",
+      "serviceType": "Move Type",
+      "fromAddress": "From Address",
+      "toAddress": "To Address",
+      "date": "Preferred Date",
+      "volume": "Volume / Room Count",
+      "volumePlaceholder": "e.g. 2 rooms or 30 m²",
+      "floorFrom": "Loading Floor",
+      "floorTo": "Unloading Floor",
+      "liftFrom": "Has Elevator",
+      "liftTo": "Has Elevator",
+      "heavyItems": "Has oversized items (piano, safe, machine)",
+      "needWorkers": "Need movers",
+      "name": "Your Name",
+      "phone": "Phone Number",
+      "comment": "Comment (optional)",
+      "commentPlaceholder": "Additional information...",
+      "next": "Next",
+      "back": "Back",
+      "submit": "Send Request",
+      "submitting": "Sending...",
+      "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)",
+      "required": "Required field"
+    },
+    "clear": {
+      "badge": "Recommended",
+      "title": "Add Clear Service?",
+      "subtitle": "Full-cycle move — we handle everything",
+      "features": ["Professional packing of all items", "Removal of old furniture and junk", "Post-move cleaning"],
+      "price": "+ from 25,000 ₸",
+      "add": "Add to Request",
+      "skip": "No, thanks",
+      "added": "Clear Service added ✓"
+    },
+    "success": {
+      "title": "Request Received!",
+      "subtitle": "We'll call back within 15 minutes. Want to add Clear Service to your move?"
+    },
+    "subscription": {
+      "title": "Monthly Moving Subscription",
+      "subtitle": "Fixed monthly fee — unlimited possibilities. For individuals and businesses.",
+      "perMonth": "/ mo",
+      "popular": "Popular",
+      "cta": "Subscribe",
+      "plans": {
+        "start": {
+          "name": "Start",
+          "price": "14,900 ₸",
+          "audience": "For individuals",
+          "features": ["Up to 4 trips/month", "Van up to 1.5 t", "Almaty & suburbs", "Support 9:00–21:00"]
+        },
+        "business": {
+          "name": "Business",
+          "price": "49,900 ₸",
+          "audience": "For small business",
+          "features": ["Up to 15 trips/month", "Truck up to 5 t", "Priority dispatch", "24/7 support", "Online dashboard"]
+        },
+        "corporate": {
+          "name": "Corporate",
+          "price": "99,900 ₸",
+          "audience": "For large business",
+          "features": ["Up to 40 trips/month", "Any vehicle", "Personal manager", "Priority 24/7", "Contracts & documents", "Inter-city included"]
+        }
+      }
+    }
   },
   "hero": {
     "badge": "#1 Moving Operator in Kazakhstan",

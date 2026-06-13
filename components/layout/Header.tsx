@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { Phone, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -8,15 +9,16 @@ import { ThemeToggle } from './ThemeToggle'
 import { MobileDrawer } from './MobileDrawer'
 
 const NAV_ITEMS = [
-  { key: 'services', href: '#services' },
-  { key: 'calculator', href: '#calculator' },
-  { key: 'about', href: '#about' },
-  { key: 'reviews', href: '#reviews' },
-  { key: 'contacts', href: '#contact' },
+  { key: 'services',  href: '/services' },
+  { key: 'storage',   href: '/storage' },
+  { key: 'packing',   href: '/packing' },
+  { key: 'partners',  href: '/partners' },
+  { key: 'about',     href: '/#about' },
 ] as const
 
 export function Header() {
   const t = useTranslations('nav')
+  const locale = useLocale()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -53,7 +55,7 @@ export function Header() {
             {NAV_ITEMS.map(item => (
               <a
                 key={item.key}
-                href={item.href}
+                href={`/${locale}${item.href}`}
                 className="relative font-medium text-sm group cursor-pointer transition-colors duration-200"
                 style={{ color: 'var(--color-text-muted)' }}
                 onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-text)')}

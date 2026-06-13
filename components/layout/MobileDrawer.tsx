@@ -5,11 +5,11 @@ import { Phone } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const NAV_ITEMS = [
-  { key: 'services', href: '#services' },
-  { key: 'calculator', href: '#calculator' },
-  { key: 'about', href: '#about' },
-  { key: 'reviews', href: '#reviews' },
-  { key: 'contacts', href: '#contact' },
+  { key: 'services',  href: '/services' },
+  { key: 'storage',   href: '/storage' },
+  { key: 'packing',   href: '/packing' },
+  { key: 'partners',  href: '/partners' },
+  { key: 'about',     href: '/#about' },
 ] as const
 
 const LOCALES = [
@@ -69,7 +69,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               {NAV_ITEMS.map((item, i) => (
                 <motion.a
                   key={item.key}
-                  href={item.href}
+                  href={`/${locale}${item.href}`}
                   onClick={onClose}
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
