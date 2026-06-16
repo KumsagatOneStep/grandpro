@@ -131,6 +131,8 @@ export function getLocationById(id: string): StorageLocation | undefined {
   return STORAGE_LOCATIONS.find(l => l.id === id)
 }
 
+export type PricingKey = `m${RentalDuration}`
+
 export const VALID_BOX_IDS = new Set(STORAGE_BOXES.map(b => b.id))
 export const VALID_LOCATION_IDS = new Set(STORAGE_LOCATIONS.map(l => l.id))
-export const VALID_DURATIONS = new Set([1, 3, 6, 12])
+export const VALID_DURATIONS = new Set<RentalDuration>([1, 3, 6, 12])
