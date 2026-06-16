@@ -18,7 +18,7 @@ function getRatelimit() {
 }
 
 function esc(s: string) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
 }
 
 export async function POST(request: NextRequest) {
@@ -41,14 +41,20 @@ export async function POST(request: NextRequest) {
     if (typeof name !== 'string' || typeof phone !== 'string') {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
     }
+    if (typeof boxId !== 'string' || typeof locationId !== 'string') {
+      return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
+    }
+    if (typeof duration !== 'number') {
+      return NextResponse.json({ error: 'Invalid duration' }, { status: 400 })
+    }
     if (!name.trim() || !phone.trim()) {
       return NextResponse.json({ error: 'Name and phone required' }, { status: 400 })
     }
     if (!KZ_PHONE_RE.test(phone)) {
       return NextResponse.json({ error: 'Invalid phone' }, { status: 400 })
     }
-    if (name.length > 200) {
-      return NextResponse.json({ error: 'Name too long' }, { status: 400 })
+    if (name.length > 200 || phone.length > 50) {
+      return NextResponse.json({ error: 'Input too long' }, { status: 400 })
     }
     if (!VALID_BOX_IDS.has(boxId)) {
       return NextResponse.json({ error: 'Invalid box' }, { status: 400 })
@@ -56,12 +62,19 @@ export async function POST(request: NextRequest) {
     if (!VALID_LOCATION_IDS.has(locationId)) {
       return NextResponse.json({ error: 'Invalid location' }, { status: 400 })
     }
-    if (!VALID_DURATIONS.has(duration)) {
+    if (!VALID_DURATIONS.has(duration as import('@/lib/storage-data').RentalDuration)) {
       return NextResponse.json({ error: 'Invalid duration' }, { status: 400 })
     }
 
     const box = getBoxById(boxId)!
     const location = getLocationById(locationId)!
+
+    if (box.locationId !== locationId) {
+      return NextResponse.json({ error: 'Box does not belong to location' }, { status: 400 })
+    }
+    if (!box.available) {
+      return NextResponse.json({ error: 'Box not available' }, { status: 409 })
+    }
     const priceKey = `m${duration}` as PricingKey
     const pricePerMonth = box.pricing[priceKey]
     const safeName = esc(name.slice(0, 200))
