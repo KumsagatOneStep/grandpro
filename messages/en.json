@@ -408,7 +408,8 @@
       "submitting": "Sending...",
       "success": "Request received! We will call you within 15 minutes.",
       "error": "Failed to send. Please try again.",
-      "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)"
+      "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)",
+      "nameRequired": "Required field"
     },
     "howItWorks": {
       "title": "How It Works",

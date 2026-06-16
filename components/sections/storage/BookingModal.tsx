@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { X, CheckCircle, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { StorageBox, StorageLocation, RentalDuration, PricingKey } from '@/lib/storage-data'
@@ -181,7 +181,7 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
                   onFocus={e => (e.currentTarget.style.borderColor = nameError ? '#DC2626' : 'var(--color-primary)')}
                   onBlur={e => (e.currentTarget.style.borderColor = nameError ? '#DC2626' : 'var(--color-border)')}
                 />
-                {nameError && <p className="text-xs" style={{ color: '#DC2626' }}>{t('name')} — обязательное поле</p>}
+                {nameError && <p className="text-xs" style={{ color: '#DC2626' }}>{t('nameRequired')}</p>}
               </div>
 
               {/* Phone */}
