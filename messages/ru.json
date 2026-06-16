@@ -377,6 +377,9 @@
       "floor": "Этаж",
       "priceLabel": "Макс. цена",
       "priceAny": "Любая",
+      "priceUpTo10000": "До 10 000 ₸",
+      "priceUpTo20000": "До 20 000 ₸",
+      "priceUpTo40000": "До 40 000 ₸",
       "availableOnly": "Только свободные",
       "reset": "Сбросить"
     },

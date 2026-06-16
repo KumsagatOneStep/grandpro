@@ -377,6 +377,9 @@
       "floor": "Floor",
       "priceLabel": "Max Price",
       "priceAny": "Any",
+      "priceUpTo10000": "Up to ₸10,000",
+      "priceUpTo20000": "Up to ₸20,000",
+      "priceUpTo40000": "Up to ₸40,000",
       "availableOnly": "Available Only",
       "reset": "Reset"
     },

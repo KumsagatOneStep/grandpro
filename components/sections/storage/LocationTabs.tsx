@@ -1,5 +1,5 @@
 'use client'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { StorageLocation } from '@/lib/storage-data'
 
 interface LocationTabsProps {
@@ -10,6 +10,12 @@ interface LocationTabsProps {
 
 export function LocationTabs({ locations, activeId, onChange }: LocationTabsProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!scrollRef.current) return
+    const activeEl = scrollRef.current.querySelector('[data-active="true"]')
+    activeEl?.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' })
+  }, [activeId])
 
   return (
     <div
@@ -24,6 +30,7 @@ export function LocationTabs({ locations, activeId, onChange }: LocationTabsProp
             key={loc.id}
             type="button"
             onClick={() => onChange(loc.id)}
+            data-active={loc.id === activeId ? 'true' : undefined}
             className="flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer"
             style={{
               background: active ? 'var(--color-primary)' : 'var(--bg-surface)',

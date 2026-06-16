@@ -56,8 +56,17 @@ export function StorageMap({ lat, lon, locationName, address, height = '260px' }
       const script = document.createElement('script')
       script.id = SCRIPT_ID
       script.src = 'https://maps.api.2gis.ru/2.0/loader.js?pkg=full'
-      script.onload = init
+      let cancelled = false
+      script.onload = () => { if (!cancelled) init() }
       document.head.appendChild(script)
+      return () => {
+        cancelled = true
+        if (mapRef.current) {
+          try { mapRef.current.remove() } catch {}
+          mapRef.current = null
+          markerRef.current = null
+        }
+      }
     } else {
       let attempts = 0
       const poll = setInterval(() => {
@@ -75,8 +84,7 @@ export function StorageMap({ lat, lon, locationName, address, height = '260px' }
         markerRef.current = null
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lon])
+  }, [lat, lon, locationName, address])
 
   return (
     <div

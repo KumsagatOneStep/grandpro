@@ -6,13 +6,7 @@ import type { StorageFilters, BoxSize } from '@/lib/storage-data'
 import { DEFAULT_FILTERS } from '@/lib/storage-data'
 
 const SIZES: BoxSize[] = ['S', 'M', 'L', 'XL']
-const SIZE_LABELS: Record<BoxSize, string> = { S: 'S (<5 м²)', M: 'M (5–9 м²)', L: 'L (10–19 м²)', XL: 'XL (20+ м²)' }
-const PRICE_OPTIONS = [
-  { label: 'Любая', max: 0 },
-  { label: 'До 10 000 ₸', max: 10000 },
-  { label: 'До 20 000 ₸', max: 20000 },
-  { label: 'До 40 000 ₸', max: 40000 },
-]
+const SIZE_LABELS: Record<BoxSize, string> = { S: 'S (<5 m²)', M: 'M (5–9 m²)', L: 'L (10–19 m²)', XL: 'XL (20+ m²)' }
 const FLOOR_OPTIONS = [1, 2, 3]
 
 interface StorageFiltersProps {
@@ -22,6 +16,12 @@ interface StorageFiltersProps {
 
 export function StorageFilters({ filters, onChange }: StorageFiltersProps) {
   const t = useTranslations('storagePage.filters')
+  const priceOptions = [
+    { label: t('priceAny'), max: 0 },
+    { label: t('priceUpTo10000'), max: 10000 },
+    { label: t('priceUpTo20000'), max: 20000 },
+    { label: t('priceUpTo40000'), max: 40000 },
+  ]
   const [open, setOpen] = useState(false)
 
   const toggleSize = (size: BoxSize) => {
@@ -72,7 +72,7 @@ export function StorageFilters({ filters, onChange }: StorageFiltersProps) {
           color: 'var(--color-text)',
         }}
       >
-        {PRICE_OPTIONS.map(o => (
+        {priceOptions.map(o => (
           <option key={o.max} value={o.max}>{o.label}</option>
         ))}
       </select>
@@ -93,10 +93,12 @@ export function StorageFilters({ filters, onChange }: StorageFiltersProps) {
         ))}
       </select>
 
-      <label className="flex items-center gap-2 cursor-pointer select-none">
+      <div className="flex items-center gap-2 cursor-pointer select-none" onClick={() => onChange({ ...filters, availableOnly: !filters.availableOnly })}>
         <button
           type="button"
-          onClick={() => onChange({ ...filters, availableOnly: !filters.availableOnly })}
+          role="switch"
+          aria-checked={filters.availableOnly}
+          aria-label={t('availableOnly')}
           className="w-10 h-6 rounded-full relative transition-colors duration-200 flex-shrink-0"
           style={{ background: filters.availableOnly ? 'var(--color-primary)' : 'var(--color-border)' }}
         >
@@ -106,7 +108,7 @@ export function StorageFilters({ filters, onChange }: StorageFiltersProps) {
           />
         </button>
         <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('availableOnly')}</span>
-      </label>
+      </div>
 
       {!isDefault && (
         <button
