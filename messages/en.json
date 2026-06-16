@@ -437,5 +437,53 @@
       "a5": "All tenants receive a personal magnetic pass for round-the-clock access."
     },
     "empty": "No units found for the selected filters. Try adjusting your search."
+  },
+  "packingPage": {
+    "hero": {
+      "title": "Packing Supplies",
+      "subtitle": "Stretch film, boxes, bubble wrap and moving tools. Self-pickup or delivery across Almaty."
+    },
+    "tabs": {
+      "all": "All Products",
+      "film": "Film & Tape",
+      "boxes": "Boxes",
+      "protection": "Furniture Protection",
+      "tools": "Tools"
+    },
+    "product": {
+      "hit": "Popular",
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock",
+      "addToCart": "Add to Cart",
+      "perUnit": "/ {unit}",
+      "empty": "Products in this category are coming soon."
+    },
+    "cart": {
+      "title": "Cart",
+      "empty": "Your cart is empty. Add products from the catalog.",
+      "total": "Total",
+      "remove": "Remove"
+    },
+    "form": {
+      "name": "Your Name",
+      "namePlaceholder": "John Smith",
+      "phone": "Phone Number",
+      "deliveryType": "Delivery Method",
+      "pickup": "Self-Pickup",
+      "delivery": "Delivery",
+      "address": "Delivery Address",
+      "addressPlaceholder": "Abay St 1, apt. 12",
+      "comment": "Comment",
+      "commentPlaceholder": "Additional information...",
+      "submit": "Place Order",
+      "submitting": "Sending...",
+      "success": "Order received! We will call you within 15 minutes.",
+      "successCta": "Continue Shopping",
+      "error": "Failed to send. Please try again.",
+      "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)",
+      "nameRequired": "Required field",
+      "addressRequired": "Please enter the delivery address",
+      "closeLabel": "Close cart"
+    }
   }
 }
