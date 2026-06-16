@@ -14,10 +14,11 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
   const [qty, setQty] = useState(1)
   const touchStartX = useRef(0)
   const { images } = product
-  const hasMultiple = images.length > 1
+  const safeImages = images.length > 0 ? images : ['/images/packing/placeholder.jpg']
+  const hasMultiple = safeImages.length > 1
 
-  function prev() { setPhotoIndex(i => (i - 1 + images.length) % images.length) }
-  function next() { setPhotoIndex(i => (i + 1) % images.length) }
+  function prev() { setPhotoIndex(i => (i - 1 + safeImages.length) % safeImages.length) }
+  function next() { setPhotoIndex(i => (i + 1) % safeImages.length) }
 
   function handleTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX
@@ -45,7 +46,7 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
         onTouchEnd={handleTouchEnd}
       >
         <img
-          src={images[photoIndex]}
+          src={safeImages[photoIndex]}
           alt={product.name}
           className="w-full h-full object-cover transition-opacity duration-200"
         />
@@ -90,7 +91,7 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
         {/* Dots */}
         {hasMultiple && (
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-            {images.map((_, i) => (
+            {safeImages.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setPhotoIndex(i)}

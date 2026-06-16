@@ -47,9 +47,21 @@ export function useCart() {
     try {
       const saved = localStorage.getItem(CART_KEY)
       if (saved) {
-        const parsed = JSON.parse(saved) as CartItem[]
+        const parsed = JSON.parse(saved) as unknown[]
         if (Array.isArray(parsed) && parsed.length > 0) {
-          dispatch({ type: 'LOAD', items: parsed })
+          const valid = parsed.filter(
+            (x): x is CartItem =>
+              x !== null &&
+              typeof x === 'object' &&
+              'qty' in x &&
+              typeof (x as CartItem).qty === 'number' &&
+              'product' in x &&
+              (x as CartItem).product !== null &&
+              typeof (x as CartItem).product === 'object' &&
+              typeof (x as CartItem).product?.id === 'string' &&
+              typeof (x as CartItem).product?.price === 'number'
+          )
+          if (valid.length > 0) dispatch({ type: 'LOAD', items: valid })
         }
       }
     } catch {}

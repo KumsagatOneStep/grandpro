@@ -27,6 +27,12 @@ export function CartDrawer({ open, onClose, cart }: CartDrawerProps) {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const submittingRef = useRef(false)
+  const isMountedRef = useRef(true)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => { isMountedRef.current = false }
+  }, [])
 
   // Focus first input on open
   useEffect(() => {
@@ -79,15 +85,15 @@ export function CartDrawer({ open, onClose, cart }: CartDrawerProps) {
         }),
       })
       if (res.ok) {
-        setSubmitted(true)
         cart.clearCart()
+        if (isMountedRef.current) setSubmitted(true)
       } else {
-        setSubmitError(true)
+        if (isMountedRef.current) setSubmitError(true)
       }
     } catch {
-      setSubmitError(true)
+      if (isMountedRef.current) setSubmitError(true)
     } finally {
-      setLoading(false)
+      if (isMountedRef.current) setLoading(false)
       submittingRef.current = false
     }
   }

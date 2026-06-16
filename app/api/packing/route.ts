@@ -43,6 +43,9 @@ export async function POST(request: NextRequest) {
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
     }
+    if (items.length > 50) {
+      return NextResponse.json({ error: 'Too many items' }, { status: 400 })
+    }
     // 3. deliveryType check
     if (typeof deliveryType !== 'string' || !['pickup', 'delivery'].includes(deliveryType)) {
       return NextResponse.json({ error: 'Invalid delivery type' }, { status: 400 })
