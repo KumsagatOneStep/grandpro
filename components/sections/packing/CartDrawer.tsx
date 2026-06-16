@@ -60,6 +60,7 @@ export function CartDrawer({ open, onClose, cart }: CartDrawerProps) {
   }
 
   async function handleSubmit() {
+    if (cart.items.length === 0) return
     const nameOk = name.trim().length > 0
     const phoneOk = KZ_PHONE_RE.test(phone)
     const addressOk = deliveryType === 'pickup' || address.trim().length > 0
@@ -331,7 +332,7 @@ export function CartDrawer({ open, onClose, cart }: CartDrawerProps) {
                             key={type}
                             type="button"
                             aria-pressed={active}
-                            onClick={() => setDeliveryType(type)}
+                            onClick={() => { setDeliveryType(type); if (type === 'pickup') setAddressError(false) }}
                             className="flex-1 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer"
                             style={{
                               background: active ? 'var(--color-primary)' : 'var(--bg-surface-elevated)',

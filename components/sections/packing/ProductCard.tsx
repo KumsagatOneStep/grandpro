@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { Package, Check } from 'lucide-react'
@@ -17,7 +17,10 @@ export function ProductCard({ product, onAdd, isInCart }: ProductCardProps) {
   const [imgError, setImgError] = useState(false)
   const [qty, setQty] = useState(1)
   const [justAdded, setJustAdded] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const touchStartX = useRef(0)
+
+  useEffect(() => () => clearTimeout(timerRef.current), [])
   const { images } = product
   const safeImages = images.length > 0 ? images : ['/images/packing/placeholder.jpg']
   const hasMultiple = safeImages.length > 1
@@ -38,7 +41,7 @@ export function ProductCard({ product, onAdd, isInCart }: ProductCardProps) {
     onAdd(product, qty)
     setQty(1)
     setJustAdded(true)
-    setTimeout(() => setJustAdded(false), 800)
+    timerRef.current = setTimeout(() => setJustAdded(false), 800)
   }
 
   const btnDisabled = !product.inStock || isInCart

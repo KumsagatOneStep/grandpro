@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
     // 7. Per-item validation
     for (const item of items) {
-      if (typeof item.id !== 'string' || typeof item.qty !== 'number' || item.qty < 1 || !Number.isInteger(item.qty)) {
+      if (typeof item.id !== 'string' || typeof item.qty !== 'number' || !Number.isSafeInteger(item.qty) || item.qty < 1 || item.qty > 9999) {
         return NextResponse.json({ error: 'Invalid item' }, { status: 400 })
       }
       if (!VALID_PRODUCT_IDS.has(item.id)) {

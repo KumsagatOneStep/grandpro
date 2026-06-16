@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { PACKING_PRODUCTS, type PackingCategory, type PackingProduct } from '@/lib/packing-data'
@@ -14,6 +14,11 @@ export function PackingPageClient() {
   const [activeCategory, setActiveCategory] = useState<PackingCategory | 'all'>('all')
   const [cartOpen, setCartOpen] = useState(false)
   const cart = useCart()
+
+  const cartItemIds = useMemo(
+    () => new Set(cart.items.map(i => i.product.id)),
+    [cart.items]
+  )
 
   const filteredProducts =
     activeCategory === 'all'
@@ -53,7 +58,7 @@ export function PackingPageClient() {
         <ProductGrid
           products={filteredProducts}
           onAddItem={handleAddItem}
-          cartItemIds={new Set(cart.items.map(i => i.product.id))}
+          cartItemIds={cartItemIds}
         />
       </section>
 

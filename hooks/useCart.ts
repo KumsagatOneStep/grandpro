@@ -1,5 +1,5 @@
 'use client'
-import { useReducer, useEffect } from 'react'
+import { useReducer, useEffect, useRef } from 'react'
 import type { PackingProduct, CartItem } from '@/lib/packing-data'
 
 type CartAction =
@@ -42,6 +42,7 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
 
 export function useCart() {
   const [items, dispatch] = useReducer(cartReducer, [])
+  const hasLoaded = useRef(false)
 
   useEffect(() => {
     try {
@@ -65,9 +66,11 @@ export function useCart() {
         }
       }
     } catch {}
+    hasLoaded.current = true
   }, [])
 
   useEffect(() => {
+    if (!hasLoaded.current) return
     try {
       localStorage.setItem(CART_KEY, JSON.stringify(items))
     } catch {}
