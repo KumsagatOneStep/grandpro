@@ -362,5 +362,75 @@
     "title": "Page Not Found",
     "subtitle": "This page doesn't exist. Go back to the homepage — we'll help you with your move.",
     "back": "Back to Homepage"
+  },
+  "storagePage": {
+    "hero": {
+      "title": "Storage Units in Almaty",
+      "subtitle": "Secure units from 2 m². 24/7 access. CCTV surveillance.",
+      "cta": "Find a Unit"
+    },
+    "mapTitle": "How to Get There",
+    "filters": {
+      "toggle": "Filters",
+      "allSizes": "All Sizes",
+      "anyFloor": "Any Floor",
+      "floor": "Floor",
+      "priceLabel": "Max Price",
+      "priceAny": "Any",
+      "availableOnly": "Available Only",
+      "reset": "Reset"
+    },
+    "box": {
+      "available": "Available",
+      "occupied": "Occupied",
+      "floor": "Floor",
+      "book": "Book Now",
+      "m1": "1 mo",
+      "m3": "3 mo",
+      "m6": "6 mo",
+      "m12": "12 mo",
+      "perMonth": "/ mo"
+    },
+    "booking": {
+      "title": "Book a Unit",
+      "duration": "Rental Period",
+      "total": "Total",
+      "totalPerMonth": "/ mo",
+      "name": "Your Name",
+      "namePlaceholder": "John Smith",
+      "phone": "Phone Number",
+      "comment": "Comment",
+      "commentPlaceholder": "Additional information...",
+      "submit": "Submit Request",
+      "submitting": "Sending...",
+      "success": "Request received! We will call you within 15 minutes.",
+      "error": "Failed to send. Please try again.",
+      "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)"
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1title": "Choose a Unit",
+      "step1desc": "Filter by size, price and floor",
+      "step2title": "Submit a Request",
+      "step2desc": "A manager calls back within 15 minutes",
+      "step3title": "Sign the Contract",
+      "step3desc": "On your first visit to the warehouse",
+      "step4title": "Get Access",
+      "step4desc": "Key + pass, 24/7 access"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "What is the minimum rental period?",
+      "a1": "The minimum period is 1 month. You can extend month by month without limits.",
+      "q2": "Can I extend my rental online?",
+      "a2": "Extensions are arranged by calling your manager or visiting the warehouse.",
+      "q3": "Is there CCTV and security?",
+      "a3": "Yes, all warehouses have 24/7 CCTV and a security guard at the entrance.",
+      "q4": "What cannot be stored?",
+      "a4": "Food, explosives, flammable substances, animals, and plants are prohibited.",
+      "q5": "Can I access the unit outside business hours?",
+      "a5": "All tenants receive a personal magnetic pass for round-the-clock access."
+    },
+    "empty": "No units found for the selected filters. Try adjusting your search."
   }
 }
