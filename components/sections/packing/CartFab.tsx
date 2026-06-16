@@ -19,7 +19,7 @@ export function CartFab({ count, onClick }: CartFabProps) {
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           onClick={onClick}
           aria-label={`Открыть корзину — ${count} товар(а)`}
-          className="fixed bottom-6 right-6 z-[900] w-14 h-14 rounded-full flex items-center justify-center shadow-lg relative"
+          className="fixed bottom-24 right-4 sm:bottom-28 sm:right-8 z-[900] w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
           style={{ background: 'var(--gradient-primary)' }}
         >
           <ShoppingCart size={24} color="#fff" />
