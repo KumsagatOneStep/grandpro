@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
+import { Package } from 'lucide-react'
 import { type PackingProduct } from '@/lib/packing-data'
 
 interface ProductCardProps {
@@ -11,14 +12,15 @@ interface ProductCardProps {
 export function ProductCard({ product, onAdd }: ProductCardProps) {
   const t = useTranslations('packingPage')
   const [photoIndex, setPhotoIndex] = useState(0)
+  const [imgError, setImgError] = useState(false)
   const [qty, setQty] = useState(1)
   const touchStartX = useRef(0)
   const { images } = product
   const safeImages = images.length > 0 ? images : ['/images/packing/placeholder.jpg']
   const hasMultiple = safeImages.length > 1
 
-  function prev() { setPhotoIndex(i => (i - 1 + safeImages.length) % safeImages.length) }
-  function next() { setPhotoIndex(i => (i + 1) % safeImages.length) }
+  function prev() { setPhotoIndex(i => { setImgError(false); return (i - 1 + safeImages.length) % safeImages.length }) }
+  function next() { setPhotoIndex(i => { setImgError(false); return (i + 1) % safeImages.length }) }
 
   function handleTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX
@@ -45,11 +47,21 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <img
-          src={safeImages[photoIndex]}
-          alt={product.name}
-          className="w-full h-full object-cover transition-opacity duration-200"
-        />
+        {imgError ? (
+          <div
+            className="w-full h-full flex flex-col items-center justify-center gap-2"
+            style={{ background: 'var(--bg-surface-elevated)', color: 'var(--color-text-muted)' }}
+          >
+            <Package size={32} strokeWidth={1.2} />
+          </div>
+        ) : (
+          <img
+            src={safeImages[photoIndex]}
+            alt={product.name}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover transition-opacity duration-200"
+          />
+        )}
 
         {/* Popular / out-of-stock badge */}
         {!product.inStock ? (
