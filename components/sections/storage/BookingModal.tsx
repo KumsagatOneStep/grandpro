@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { X, CheckCircle, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -29,6 +29,16 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
   const [submitError, setSubmitError] = useState(false)
   const submittingRef = useRef(false)
 
+  useEffect(() => {
+    document.getElementById('booking-name')?.focus()
+  }, [])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape' && !loading) onClose() }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [loading, onClose])
+
   const priceKey = `m${duration}` as PricingKey
   const pricePerMonth = box.pricing[priceKey]
 
@@ -39,7 +49,7 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
       else if (v.startsWith('77')) v = '+' + v
       else                         v = '+7' + v
     }
-    if (v.length < 2) v = '+7'
+    if (!v.startsWith('+7') || v.length < 2) v = '+7'
     setPhone(v)
     if (phoneError) setPhoneError(false)
   }
@@ -82,7 +92,7 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={loading ? undefined : onClose}
       />
 
       {/* Sheet */}
@@ -94,6 +104,9 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
         className="fixed bottom-0 left-0 right-0 sm:inset-0 sm:flex sm:items-center sm:justify-center z-[1001] pointer-events-none"
       >
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="booking-dialog-title"
           className="pointer-events-auto w-full sm:max-w-md sm:mx-4 rounded-t-3xl sm:rounded-3xl p-6 pb-8 sm:pb-6 max-h-[90vh] overflow-y-auto"
           style={{
             background: 'var(--bg-surface)',
@@ -104,7 +117,7 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
           {/* Header */}
           <div className="flex items-center justify-between mb-5">
             <div>
-              <p className="font-heading font-bold text-lg" style={{ color: 'var(--color-text)' }}>
+              <p id="booking-dialog-title" className="font-heading font-bold text-lg" style={{ color: 'var(--color-text)' }}>
                 {t('title')}
               </p>
               <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
@@ -113,6 +126,7 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
             </div>
             <button
               type="button" onClick={onClose}
+              aria-label="Закрыть"
               className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-colors"
               style={{ background: 'var(--bg-surface-elevated)', color: 'var(--color-text-muted)' }}
             >
@@ -138,6 +152,7 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
                     return (
                       <button
                         key={d} type="button"
+                        aria-pressed={active}
                         onClick={() => setDuration(d)}
                         className="py-2 rounded-xl text-xs font-bold text-center transition-all cursor-pointer"
                         style={{

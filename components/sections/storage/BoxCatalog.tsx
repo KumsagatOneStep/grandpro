@@ -22,6 +22,8 @@ export function BoxCatalog({ boxes, filters, onBook }: BoxCatalogProps) {
         {visible.length === 0 ? (
           <motion.div
             key="empty"
+            aria-live="polite"
+            aria-atomic="true"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
