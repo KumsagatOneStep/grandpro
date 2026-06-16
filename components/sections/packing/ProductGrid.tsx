@@ -8,9 +8,10 @@ import { ProductCard } from './ProductCard'
 interface ProductGridProps {
   products: PackingProduct[]
   onAddItem: (p: PackingProduct, qty: number) => void
+  cartItemIds: Set<string>
 }
 
-export function ProductGrid({ products, onAddItem }: ProductGridProps) {
+export function ProductGrid({ products, onAddItem, cartItemIds }: ProductGridProps) {
   const t = useTranslations('packingPage')
 
   return (
@@ -42,7 +43,7 @@ export function ProductGrid({ products, onAddItem }: ProductGridProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
             >
-              <ProductCard product={product} onAdd={onAddItem} />
+              <ProductCard product={product} onAdd={onAddItem} isInCart={cartItemIds.has(product.id)} />
             </motion.div>
           ))}
         </motion.div>

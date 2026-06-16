@@ -1,19 +1,22 @@
 'use client'
 import { useState, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { Package } from 'lucide-react'
+import { Package, Check } from 'lucide-react'
 import { type PackingProduct } from '@/lib/packing-data'
 
 interface ProductCardProps {
   product: PackingProduct
   onAdd: (p: PackingProduct, qty: number) => void
+  isInCart: boolean
 }
 
-export function ProductCard({ product, onAdd }: ProductCardProps) {
+export function ProductCard({ product, onAdd, isInCart }: ProductCardProps) {
   const t = useTranslations('packingPage')
   const [photoIndex, setPhotoIndex] = useState(0)
   const [imgError, setImgError] = useState(false)
   const [qty, setQty] = useState(1)
+  const [justAdded, setJustAdded] = useState(false)
   const touchStartX = useRef(0)
   const { images } = product
   const safeImages = images.length > 0 ? images : ['/images/packing/placeholder.jpg']
@@ -31,10 +34,14 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
   }
 
   function handleAdd() {
-    if (!product.inStock) return
+    if (!product.inStock || isInCart || justAdded) return
     onAdd(product, qty)
     setQty(1)
+    setJustAdded(true)
+    setTimeout(() => setJustAdded(false), 800)
   }
+
+  const btnDisabled = !product.inStock || isInCart
 
   return (
     <div
@@ -149,7 +156,8 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
           >
             <button
               onClick={() => setQty(q => Math.max(1, q - 1))}
-              className="w-8 h-8 flex items-center justify-center text-lg"
+              disabled={isInCart}
+              className="w-8 h-8 flex items-center justify-center text-lg disabled:opacity-40"
               style={{ color: 'var(--color-text)' }}
             >
               −
@@ -162,23 +170,54 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
             </span>
             <button
               onClick={() => setQty(q => q + 1)}
-              className="w-8 h-8 flex items-center justify-center text-lg"
+              disabled={isInCart}
+              className="w-8 h-8 flex items-center justify-center text-lg disabled:opacity-40"
               style={{ color: 'var(--color-text)' }}
             >
               +
             </button>
           </div>
-          <button
+
+          <motion.button
             onClick={handleAdd}
-            disabled={!product.inStock}
-            className="flex-1 h-8 rounded-lg text-sm font-medium transition-opacity disabled:opacity-40"
+            disabled={btnDisabled}
+            animate={justAdded ? { scale: [1, 1.1, 0.94, 1] } : { scale: 1 }}
+            transition={{ duration: 0.32, ease: 'easeOut' }}
+            className="flex-1 h-8 rounded-lg text-sm font-medium overflow-hidden"
             style={{
-              background: 'var(--gradient-primary)',
-              color: '#fff',
+              background: btnDisabled ? 'var(--bg-surface-elevated)' : 'var(--gradient-primary)',
+              color: btnDisabled ? 'var(--color-text-muted)' : '#fff',
+              cursor: btnDisabled ? 'default' : 'pointer',
+              transition: 'background 0.25s, color 0.25s',
             }}
           >
-            {t('product.addToCart')}
-          </button>
+            <AnimatePresence mode="wait" initial={false}>
+              {isInCart ? (
+                <motion.span
+                  key="in-cart"
+                  className="flex items-center justify-center gap-1"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Check size={14} strokeWidth={2.5} />
+                  В корзине
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="add"
+                  className="flex items-center justify-center"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {t('product.addToCart')}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
       </div>
     </div>

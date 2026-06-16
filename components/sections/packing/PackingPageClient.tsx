@@ -53,6 +53,7 @@ export function PackingPageClient() {
         <ProductGrid
           products={filteredProducts}
           onAddItem={handleAddItem}
+          cartItemIds={new Set(cart.items.map(i => i.product.id))}
         />
       </section>
 
