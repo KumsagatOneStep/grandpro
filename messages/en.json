@@ -409,7 +409,8 @@
       "success": "Request received! We will call you within 15 minutes.",
       "error": "Failed to send. Please try again.",
       "phoneInvalid": "Invalid format (+7 7XX XXX XX XX)",
-      "nameRequired": "Required field"
+      "nameRequired": "Required field",
+      "closeLabel": "Close"
     },
     "howItWorks": {
       "title": "How It Works",

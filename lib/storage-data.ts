@@ -117,8 +117,9 @@ export function filterBoxes(boxes: StorageBox[], f: StorageFilters): StorageBox[
     if (f.sizes.length > 0 && !f.sizes.includes(box.size)) return false
     if (f.availableOnly && !box.available) return false
     if (f.floor !== null && box.floor !== f.floor) return false
-    if (box.pricing.m1 < f.priceMin) return false
-    if (f.priceMax > 0 && box.pricing.m1 > f.priceMax) return false
+    const minPrice = Math.min(box.pricing.m1, box.pricing.m3, box.pricing.m6, box.pricing.m12)
+    if (minPrice < f.priceMin) return false
+    if (f.priceMax > 0 && minPrice > f.priceMax) return false
     return true
   })
 }

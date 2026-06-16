@@ -61,6 +61,7 @@ export function StorageMap({ lat, lon, locationName, address, height = '260px' }
       document.head.appendChild(script)
       return () => {
         cancelled = true
+        script.onload = null
         if (mapRef.current) {
           try { mapRef.current.remove() } catch {}
           mapRef.current = null

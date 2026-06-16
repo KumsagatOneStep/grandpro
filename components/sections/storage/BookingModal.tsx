@@ -45,7 +45,8 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
     let v = e.target.value
     if (!v.startsWith('+7')) {
-      if (v.startsWith('8'))       v = '+7' + v.slice(1)
+      if (v === '+')               v = '+7'
+      else if (v.startsWith('8'))  v = '+7' + v.slice(1)
       else if (v.startsWith('77')) v = '+' + v
       else                         v = '+7' + v
     }
@@ -125,9 +126,10 @@ export function BookingModal({ box, location, onClose }: BookingModalProps) {
               </p>
             </div>
             <button
-              type="button" onClick={onClose}
-              aria-label="Закрыть"
-              className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-colors"
+              type="button" onClick={loading ? undefined : onClose}
+              disabled={loading}
+              aria-label={t('closeLabel')}
+              className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-colors disabled:opacity-40"
               style={{ background: 'var(--bg-surface-elevated)', color: 'var(--color-text-muted)' }}
             >
               <X size={16} />

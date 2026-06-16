@@ -26,6 +26,7 @@ export function StoragePageClient() {
 
   const activeLocation = getLocationById(activeLocationId) ?? STORAGE_LOCATIONS[0]
   const locationBoxes = STORAGE_BOXES.filter(b => b.locationId === activeLocationId)
+  const selectedLocation = selectedBox ? getLocationById(selectedBox.locationId) : null
 
   function handleLocationChange(id: string) {
     setActiveLocationId(id)
@@ -174,17 +175,14 @@ export function StoragePageClient() {
 
       {/* ── Booking Modal ── */}
       <AnimatePresence>
-        {selectedBox && (() => {
-          const loc = getLocationById(selectedBox.locationId)
-          if (!loc) return null
-          return (
-            <BookingModal
-              box={selectedBox}
-              location={loc}
-              onClose={() => setSelectedBox(null)}
-            />
-          )
-        })()}
+        {selectedBox && selectedLocation && (
+          <BookingModal
+            key="booking-modal"
+            box={selectedBox}
+            location={selectedLocation}
+            onClose={() => setSelectedBox(null)}
+          />
+        )}
       </AnimatePresence>
     </>
   )
