@@ -22,9 +22,13 @@ export async function POST(request: NextRequest) {
 
   const rl = getRatelimit()
   if (rl) {
-    const { success } = await rl.limit(ip)
-    if (!success) {
-      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    try {
+      const { success } = await rl.limit(ip)
+      if (!success) {
+        return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+      }
+    } catch {
+      // Redis unavailable — allow request through
     }
   }
 

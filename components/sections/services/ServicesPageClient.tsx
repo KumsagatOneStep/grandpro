@@ -417,6 +417,9 @@ export function ServicesPageClient() {
   const set = <K extends keyof FormState>(key: K, val: FormState[K]) =>
     setForm(f => ({ ...f, [key]: val }))
 
+  const scrollToForm = () =>
+    document.getElementById('request')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
   const isB2B = B2B_TYPES.includes(form.serviceType as ServiceType)
   const upsellCards = step === 'success'
     ? getUpsellCards(form).filter(c => !dismissedUpsells.has(c.id))
@@ -495,25 +498,25 @@ export function ServicesPageClient() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="pt-36 pb-20 px-6" style={{ background: 'var(--gradient-hero)' }}>
+      <section className="pt-28 pb-12 px-4 sm:pt-36 sm:pb-20 sm:px-6" style={{ background: 'var(--gradient-hero)' }}>
         <div className="max-w-[1280px] mx-auto text-center">
           <motion.h1
             initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-            className="font-heading text-4xl md:text-6xl font-extrabold mb-6 tracking-tight"
+            className="font-heading text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 sm:mb-6 tracking-tight"
             style={{ color: 'var(--color-text)' }}
           >
             {t('hero.title')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-lg md:text-xl max-w-2xl mx-auto mb-10"
+            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-10"
             style={{ color: 'var(--color-text-muted)' }}
           >
             {t('hero.subtitle')}
           </motion.p>
           <motion.a
             href="#request" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-white text-lg"
+            className="inline-flex items-center gap-2 px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl font-bold text-white text-base sm:text-lg"
             style={{ background: 'var(--gradient-primary)' }}
           >
             {t('hero.cta')} <ArrowRight size={20} />
@@ -521,51 +524,10 @@ export function ServicesPageClient() {
         </div>
       </section>
 
-      {/* ── Service cards ── */}
-      <section className="py-16 px-6" style={{ background: 'var(--bg-main)' }}>
-        <div className="max-w-[1280px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {serviceTypes.map((type, i) => {
-              const Icon = SERVICE_ICONS[type]
-              const color = SERVICE_COLORS[type]
-              const active = form.serviceType === type
-              return (
-                <motion.button
-                  key={type} type="button"
-                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  onClick={() => {
-                    set('serviceType', type)
-                    document.getElementById('request')?.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  className="flex flex-col items-center gap-3 p-5 rounded-2xl text-center cursor-pointer transition-all duration-200 hover:-translate-y-1"
-                  style={{
-                    background: active ? `${color}18` : 'var(--bg-surface)',
-                    border: `1.5px solid ${active ? color : 'var(--color-border)'}`,
-                    boxShadow: active ? `0 4px 20px ${color}30` : 'none',
-                  }}
-                >
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ background: `${color}18`, color }}>
-                    <Icon size={22} />
-                  </div>
-                  <span className="text-xs font-semibold leading-tight"
-                    style={{ color: active ? color : 'var(--color-text)' }}>
-                    {t(`cards.${type}.title`)}
-                  </span>
-                  <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                    {t(`cards.${type}.desc`)}
-                  </span>
-                </motion.button>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* ── Wizard ── */}
-      <section id="request" className="py-16 px-6" style={{ background: 'var(--bg-surface)' }}>
+      <section id="request" className="py-12 px-4 sm:py-16 sm:px-6" style={{ background: 'var(--bg-surface)' }}>
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-heading text-3xl font-extrabold mb-2 text-center" style={{ color: 'var(--color-text)' }}>
+          <h2 className="font-heading text-2xl sm:text-3xl font-extrabold mb-2 text-center" style={{ color: 'var(--color-text)' }}>
             {t('wizard.title')}
           </h2>
           <p className="text-center mb-10 text-sm" style={{ color: 'var(--color-text-muted)' }}>
@@ -598,7 +560,7 @@ export function ServicesPageClient() {
                   error={errors.toAddress} />
                 <InputField label={t('wizard.date')} value={form.date}
                   onChange={v => set('date', v)} type="date" />
-                <button type="button" onClick={() => validateStep1() && setStep(2)}
+                <button type="button" onClick={() => { if (validateStep1()) { setStep(2); scrollToForm() } }}
                   className="w-full py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                   style={{ background: 'var(--gradient-primary)' }}>
                   {t('wizard.next')} <ArrowRight size={18} />
@@ -623,12 +585,12 @@ export function ServicesPageClient() {
                 <Step2Content form={form} set={set} errors={errors} />
 
                 <div className="flex gap-3 mt-2">
-                  <button type="button" onClick={() => setStep(1)}
+                  <button type="button" onClick={() => { setStep(1); scrollToForm() }}
                     className="flex-none px-5 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity"
                     style={{ background: 'var(--bg-surface-elevated)', color: 'var(--color-text-muted)' }}>
                     <ChevronLeft size={18} /> {t('wizard.back')}
                   </button>
-                  <button type="button" onClick={() => validateStep2() && setStep(3)}
+                  <button type="button" onClick={() => { if (validateStep2()) { setStep(3); scrollToForm() } }}
                     className="flex-1 py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                     style={{ background: 'var(--gradient-primary)' }}>
                     {t('wizard.next')} <ArrowRight size={18} />
@@ -663,7 +625,7 @@ export function ServicesPageClient() {
                     onBlur={e => (e.currentTarget.style.borderColor = 'var(--color-border)')} />
                 </div>
                 <div className="flex gap-3">
-                  <button type="button" onClick={() => setStep(2)}
+                  <button type="button" onClick={() => { setStep(2); scrollToForm() }}
                     className="flex-none px-5 py-4 rounded-2xl font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity"
                     style={{ background: 'var(--bg-surface-elevated)', color: 'var(--color-text-muted)' }}>
                     <ChevronLeft size={18} /> {t('wizard.back')}
@@ -805,29 +767,28 @@ export function ServicesPageClient() {
       </section>
 
       {/* ── Subscription ── */}
-      <section id="subscription" className="py-20 px-6" style={{ background: 'var(--bg-main)' }}>
+      <section id="subscription" className="py-14 px-4 sm:py-20 sm:px-6" style={{ background: 'var(--bg-main)' }}>
         <div className="max-w-[1280px] mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--color-text)' }}>
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--color-text)' }}>
               {t('subscription.title')}
             </h2>
-            <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-base sm:text-lg max-w-xl mx-auto" style={{ color: 'var(--color-text-muted)' }}>
               {t('subscription.subtitle')}
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:items-start">
             {PLAN_KEYS.map((key, i) => {
               const isPopular = key === 'business'
               return (
                 <motion.div key={key}
-                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}
                   transition={{ delay: i * 0.1 }}
-                  className="rounded-3xl p-8 flex flex-col relative"
+                  className={`rounded-3xl p-5 sm:p-8 flex flex-col relative${isPopular ? ' md:scale-[1.04]' : ''}`}
                   style={{
                     background: isPopular ? 'var(--gradient-primary)' : 'var(--bg-surface)',
                     border: isPopular ? 'none' : '1px solid var(--color-border)',
                     boxShadow: isPopular ? '0 20px 60px var(--shadow-main)' : 'none',
-                    transform: isPopular ? 'scale(1.04)' : undefined,
                   }}>
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-white"

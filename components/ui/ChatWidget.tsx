@@ -8,7 +8,7 @@ export function ChatWidget() {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="fixed bottom-8 right-8 z-[998] flex flex-col items-end gap-3">
+    <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[998] flex flex-col items-end gap-3">
       {open && (
         <div
           className="w-72 rounded-xl overflow-hidden shadow-2xl"
