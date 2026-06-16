@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { PACKING_CATEGORIES, type PackingCategory } from '@/lib/packing-data'
 
@@ -24,9 +24,14 @@ export function CategoryTabs({ active, onChange }: CategoryTabsProps) {
   return (
     <div
       className="sticky top-16 z-40 border-b overflow-x-auto"
-      style={{ borderColor: 'var(--color-border)', background: 'var(--bg-surface)' }}
+      style={{
+        borderColor: 'var(--color-border)',
+        background: 'var(--bg-surface)',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      } as React.CSSProperties}
     >
-      <div className="flex min-w-max px-4 sm:px-6" style={{ scrollbarWidth: 'none' }}>
+      <div className="flex min-w-max px-4 sm:px-6 [&::-webkit-scrollbar]:hidden">
         {tabs.map(tab => {
           const isActive = tab.id === active
           return (
