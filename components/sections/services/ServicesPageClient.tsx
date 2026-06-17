@@ -210,6 +210,7 @@ function Step2Content({
         error={errors.rooms}
         placeholder="— выберите"
         headerLabel="Количество комнат"
+        instanceId="rooms-apartment"
         value={form.rooms}
         onChange={v => set('rooms', v)}
         data={['1', '2', '3', '4', '5+'].map(v => ({ id: v, value: v, label: `${v} комн.` }))}
@@ -298,6 +299,7 @@ function Step2Content({
         error={errors.equipmentType}
         placeholder="— выберите"
         headerLabel="Тип оборудования"
+        instanceId="equipment-type"
         value={form.equipmentType}
         onChange={v => set('equipmentType', v)}
         data={[
@@ -330,6 +332,7 @@ function Step2Content({
         error={errors.rooms}
         placeholder="— выберите"
         headerLabel="Количество комнат"
+        instanceId="rooms-packing"
         value={form.rooms}
         onChange={v => set('rooms', v)}
         data={['1', '2', '3', '4', '5+'].map(v => ({ id: v, value: v, label: `${v} комн.` }))}
@@ -538,6 +541,7 @@ export function ServicesPageClient() {
                   error={errors.serviceType}
                   placeholder="— выберите"
                   headerLabel={t('wizard.serviceType')}
+                  instanceId="service-type"
                   value={form.serviceType}
                   onChange={v => set('serviceType', v as ServiceType)}
                   data={serviceTypes.map(type => ({

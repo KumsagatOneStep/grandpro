@@ -20,6 +20,7 @@ type AnimatedSelectProps = {
   onChange: (value: string) => void
   placeholder?: string
   headerLabel?: string
+  instanceId?: string
 }
 
 export function AnimatedSelect({
@@ -31,20 +32,22 @@ export function AnimatedSelect({
   onChange,
   placeholder = '— выберите',
   headerLabel,
+  instanceId = 'default',
 }: AnimatedSelectProps) {
   const [open, setOpen] = useState(false)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+  const layoutId = `animated-select-${instanceId}`
 
   useEffect(() => {
     if (!open) return
-    function handle(e: MouseEvent) {
+    function handle(e: PointerEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false)
       }
     }
-    document.addEventListener('mousedown', handle)
-    return () => document.removeEventListener('mousedown', handle)
+    document.addEventListener('pointerdown', handle)
+    return () => document.removeEventListener('pointerdown', handle)
   }, [open])
 
   const selected = data.find(d => d.value === value)
@@ -66,7 +69,7 @@ export function AnimatedSelect({
                 key="collapsed"
                 type="button"
                 layout
-                layoutId="dropdown"
+                layoutId={layoutId}
                 animate={{ borderRadius: 12 }}
                 onClick={() => setOpen(true)}
                 aria-expanded={open}
@@ -103,7 +106,7 @@ export function AnimatedSelect({
               <motion.div
                 key="expanded"
                 layout
-                layoutId="dropdown"
+                layoutId={layoutId}
                 animate={{ borderRadius: 12 }}
                 className="w-full overflow-hidden py-2"
                 style={{
@@ -127,7 +130,7 @@ export function AnimatedSelect({
                   </button>
                 </div>
 
-                <div>
+                <div className="max-h-60 overflow-y-auto">
                   {data.map((item, i) => (
                     <motion.button
                       key={item.id}
