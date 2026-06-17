@@ -1,11 +1,12 @@
 'use client'
 import { useState } from 'react'
+import { AnimatedSelect } from '@/components/ui/AnimatedSelect'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Building2, Truck, Globe, Wrench, Package,
   ArrowRight, ChevronLeft, Check, Sparkles, Star,
-  Calendar, ChevronDown, Trash2, Zap, PackageCheck,
+  Calendar, Trash2, Zap, PackageCheck,
 } from 'lucide-react'
 import { KZ_PHONE_RE } from '@/lib/validators'
 
@@ -171,40 +172,6 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
   )
 }
 
-function SelectField({
-  label, value, onChange, options, required, error,
-}: {
-  label: string; value: string; onChange: (v: string) => void
-  options: { value: string; label: string }[]
-  required?: boolean; error?: string
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
-        {label}{required && <span style={{ color: '#DC2626' }}> *</span>}
-      </label>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl text-sm outline-none appearance-none transition-all duration-200"
-          style={{
-            background: 'var(--bg-surface-elevated)',
-            border: `1.5px solid ${error ? '#DC2626' : 'var(--color-border)'}`,
-            color: value ? 'var(--color-text)' : 'var(--color-text-muted)',
-          }}
-        >
-          <option value="">— выберите</option>
-          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          style={{ color: 'var(--color-text-muted)' }} />
-      </div>
-      {error && <p className="text-xs" style={{ color: '#DC2626' }}>{error}</p>}
-    </div>
-  )
-}
-
 function FloorBlock({
   form, set,
 }: { form: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
@@ -237,10 +204,15 @@ function Step2Content({
 
   if (type === 'apartment') return (
     <div className="flex flex-col gap-5">
-      <SelectField
-        label="Количество комнат" value={form.rooms} onChange={v => set('rooms', v)} required
+      <AnimatedSelect
+        label="Количество комнат"
+        required
         error={errors.rooms}
-        options={['1', '2', '3', '4', '5+'].map(v => ({ value: v, label: `${v} комн.` }))}
+        placeholder="— выберите"
+        headerLabel="Количество комнат"
+        value={form.rooms}
+        onChange={v => set('rooms', v)}
+        data={['1', '2', '3', '4', '5+'].map(v => ({ id: v, value: v, label: `${v} комн.` }))}
       />
       <FloorBlock form={form} set={set} />
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
@@ -320,15 +292,20 @@ function Step2Content({
 
   if (type === 'rigging') return (
     <div className="flex flex-col gap-5">
-      <SelectField
-        label="Тип оборудования" value={form.equipmentType}
-        onChange={v => set('equipmentType', v)} required error={errors.equipmentType}
-        options={[
-          { value: 'safe', label: 'Сейф' },
-          { value: 'piano', label: 'Пианино / рояль' },
-          { value: 'machine', label: 'Станок / оборудование' },
-          { value: 'atm', label: 'Банкомат / терминал' },
-          { value: 'other', label: 'Другое' },
+      <AnimatedSelect
+        label="Тип оборудования"
+        required
+        error={errors.equipmentType}
+        placeholder="— выберите"
+        headerLabel="Тип оборудования"
+        value={form.equipmentType}
+        onChange={v => set('equipmentType', v)}
+        data={[
+          { id: 'safe',    value: 'safe',    label: 'Сейф' },
+          { id: 'piano',   value: 'piano',   label: 'Пианино / рояль' },
+          { id: 'machine', value: 'machine', label: 'Станок / оборудование' },
+          { id: 'atm',     value: 'atm',     label: 'Банкомат / терминал' },
+          { id: 'other',   value: 'other',   label: 'Другое' },
         ]}
       />
       <div className="grid grid-cols-2 gap-4">
@@ -347,10 +324,15 @@ function Step2Content({
 
   if (type === 'packing') return (
     <div className="flex flex-col gap-5">
-      <SelectField
-        label="Количество комнат" value={form.rooms} onChange={v => set('rooms', v)} required
+      <AnimatedSelect
+        label="Количество комнат"
+        required
         error={errors.rooms}
-        options={['1', '2', '3', '4', '5+'].map(v => ({ value: v, label: `${v} комн.` }))}
+        placeholder="— выберите"
+        headerLabel="Количество комнат"
+        value={form.rooms}
+        onChange={v => set('rooms', v)}
+        data={['1', '2', '3', '4', '5+'].map(v => ({ id: v, value: v, label: `${v} комн.` }))}
       />
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
         <Toggle checked={form.fragileInventory} onChange={v => set('fragileInventory', v)}
@@ -401,6 +383,10 @@ const SERVICE_ICONS: Record<ServiceType, React.ElementType> = {
 const SERVICE_COLORS: Record<ServiceType, string> = {
   apartment: '#0369A1', office: '#7C3AED', cargo: '#D97706',
   international: '#059669', rigging: '#DC2626', packing: '#0891B2',
+}
+function ServiceIcon({ type }: { type: ServiceType }) {
+  const Icon = SERVICE_ICONS[type]
+  return <Icon size={18} strokeWidth={1.5} />
 }
 const PLAN_KEYS = ['start', 'business', 'corporate'] as const
 
@@ -546,11 +532,21 @@ export function ServicesPageClient() {
             {step === 1 && (
               <motion.div key="s1" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
                 className="flex flex-col gap-5">
-                <SelectField
-                  label={t('wizard.serviceType')} value={form.serviceType}
-                  onChange={v => set('serviceType', v as ServiceType)} required
+                <AnimatedSelect
+                  label={t('wizard.serviceType')}
+                  required
                   error={errors.serviceType}
-                  options={serviceTypes.map(type => ({ value: type, label: t(`cards.${type}.title`) }))}
+                  placeholder="— выберите"
+                  headerLabel={t('wizard.serviceType')}
+                  value={form.serviceType}
+                  onChange={v => set('serviceType', v as ServiceType)}
+                  data={serviceTypes.map(type => ({
+                    id: type,
+                    value: type,
+                    label: t(`cards.${type}.title`),
+                    description: t(`cards.${type}.desc`),
+                    icon: <ServiceIcon type={type} />,
+                  }))}
                 />
                 <InputField label={t('wizard.fromAddress')} value={form.fromAddress}
                   onChange={v => set('fromAddress', v)} required placeholder="ул. Абая 1, Алматы"
