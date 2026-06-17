@@ -124,10 +124,12 @@ const B2B_TYPES: ServiceType[] = ['office', 'cargo', 'international']
 // ─── UI helpers ───────────────────────────────────────────────────────────────
 
 function InputField({
-  label, value, onChange, placeholder, type = 'text', required, error,
+  label, value, onChange, placeholder, type = 'text', required, error, inputMode, autoComplete,
 }: {
   label: string; value: string; onChange: (v: string) => void
   placeholder?: string; type?: string; required?: boolean; error?: string
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode']
+  autoComplete?: string
 }) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -139,6 +141,8 @@ function InputField({
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
+        inputMode={inputMode}
+        autoComplete={autoComplete}
         className="w-full px-4 py-3 rounded-xl text-base outline-none transition-all duration-200"
         style={{
           background: 'var(--bg-surface-elevated)',
@@ -176,15 +180,15 @@ function FloorBlock({
   form, set,
 }: { form: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="flex flex-col gap-3">
         <InputField label="Этаж (погрузка)" value={form.floorFrom}
-          onChange={v => set('floorFrom', v)} placeholder="напр. 5" />
+          onChange={v => set('floorFrom', v)} placeholder="напр. 5" inputMode="numeric" />
         <Toggle checked={form.liftFrom} onChange={v => set('liftFrom', v)} label="Лифт есть" />
       </div>
       <div className="flex flex-col gap-3">
         <InputField label="Этаж (выгрузка)" value={form.floorToNum}
-          onChange={v => set('floorToNum', v)} placeholder="напр. 3" />
+          onChange={v => set('floorToNum', v)} placeholder="напр. 3" inputMode="numeric" />
         <Toggle checked={form.liftTo} onChange={v => set('liftTo', v)} label="Лифт есть" />
       </div>
     </div>
@@ -241,8 +245,8 @@ function Step2Content({
         ))}
       </div>
       {form.useM2
-        ? <InputField label="Площадь" value={form.m2} onChange={v => set('m2', v)} placeholder="напр. 150 м²" />
-        : <InputField label="Рабочих мест" value={form.headcount} onChange={v => set('headcount', v)} placeholder="напр. 20 человек" />
+        ? <InputField label="Площадь" value={form.m2} onChange={v => set('m2', v)} placeholder="напр. 150 м²" inputMode="numeric" />
+        : <InputField label="Рабочих мест" value={form.headcount} onChange={v => set('headcount', v)} placeholder="напр. 20 человек" inputMode="numeric" />
       }
       <FloorBlock form={form} set={set} />
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
@@ -257,11 +261,11 @@ function Step2Content({
 
   if (type === 'cargo') return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField label="Вес (кг)" value={form.weight}
-          onChange={v => set('weight', v)} placeholder="напр. 500" />
+          onChange={v => set('weight', v)} placeholder="напр. 500" inputMode="numeric" />
         <InputField label="Объём (м³)" value={form.cargoVolume}
-          onChange={v => set('cargoVolume', v)} placeholder="напр. 10" />
+          onChange={v => set('cargoVolume', v)} placeholder="напр. 10" inputMode="decimal" />
       </div>
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
         <Toggle checked={form.fragile} onChange={v => set('fragile', v)} label="Хрупкий груз" />
@@ -277,11 +281,11 @@ function Step2Content({
       <InputField label="Страна назначения" value={form.destCountry}
         onChange={v => set('destCountry', v)} placeholder="напр. Россия, Германия" required
         error={errors.destCountry} />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField label="Объём (м³)" value={form.cargoVolume}
-          onChange={v => set('cargoVolume', v)} placeholder="напр. 20" />
+          onChange={v => set('cargoVolume', v)} placeholder="напр. 20" inputMode="decimal" />
         <InputField label="Вес (кг)" value={form.weight}
-          onChange={v => set('weight', v)} placeholder="напр. 1000" />
+          onChange={v => set('weight', v)} placeholder="напр. 1000" inputMode="numeric" />
       </div>
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
         <Toggle checked={form.needsCustoms} onChange={v => set('needsCustoms', v)}
@@ -310,11 +314,11 @@ function Step2Content({
           { id: 'other',   value: 'other',   label: 'Другое' },
         ]}
       />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField label="Вес (кг)" value={form.equipmentWeight}
-          onChange={v => set('equipmentWeight', v)} placeholder="напр. 300" />
+          onChange={v => set('equipmentWeight', v)} placeholder="напр. 300" inputMode="numeric" />
         <InputField label="Этаж" value={form.floorFrom}
-          onChange={v => set('floorFrom', v)} placeholder="напр. 3" />
+          onChange={v => set('floorFrom', v)} placeholder="напр. 3" inputMode="numeric" />
       </div>
       <div className="flex flex-col gap-3 p-4 rounded-2xl" style={{ background: 'var(--bg-surface-elevated)' }}>
         <Toggle checked={form.needsCrane} onChange={v => set('needsCrane', v)}
@@ -605,13 +609,14 @@ export function ServicesPageClient() {
                 className="flex flex-col gap-5">
                 <InputField label={t('wizard.name')} value={form.name}
                   onChange={v => set('name', v)} required placeholder="Иван Петров"
-                  error={errors.name} />
+                  error={errors.name} autoComplete="name" />
                 <InputField label={t('wizard.phone')} value={form.phone}
                   onChange={v => set('phone', v)} required placeholder="+7 777 123 45 67"
-                  type="tel" error={errors.phone} />
+                  type="tel" error={errors.phone} autoComplete="tel" inputMode="tel" />
                 {isB2B && (
                   <InputField label="Название компании" value={form.companyName}
-                    onChange={v => set('companyName', v)} placeholder="ТОО «Название»" />
+                    onChange={v => set('companyName', v)} placeholder="ТОО «Название»"
+                    autoComplete="organization" />
                 )}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
