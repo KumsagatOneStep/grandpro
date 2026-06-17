@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
 import { ChevronDown, X } from 'lucide-react'
 
@@ -8,7 +8,7 @@ export type AnimatedSelectOption = {
   value: string
   label: string
   description?: string
-  icon?: React.ReactNode
+  icon?: ReactNode
 }
 
 type AnimatedSelectProps = {
@@ -33,6 +33,7 @@ export function AnimatedSelect({
   headerLabel,
 }: AnimatedSelectProps) {
   const [open, setOpen] = useState(false)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -68,6 +69,8 @@ export function AnimatedSelect({
                 layoutId="dropdown"
                 animate={{ borderRadius: 12 }}
                 onClick={() => setOpen(true)}
+                aria-expanded={false}
+                aria-haspopup="listbox"
                 className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left overflow-hidden"
                 style={{
                   background: 'var(--bg-surface-elevated)',
@@ -134,16 +137,14 @@ export function AnimatedSelect({
                       onClick={() => { onChange(item.value); setOpen(false) }}
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors"
                       style={{
-                        background: item.value === value ? 'var(--active-badge)' : 'transparent',
+                        background: item.value === value
+                          ? 'var(--active-badge)'
+                          : hoveredId === item.id
+                            ? 'var(--bg-surface)'
+                            : 'transparent',
                       }}
-                      onMouseEnter={e => {
-                        if (item.value !== value)
-                          e.currentTarget.style.background = 'var(--bg-surface)'
-                      }}
-                      onMouseLeave={e => {
-                        if (item.value !== value)
-                          e.currentTarget.style.background = 'transparent'
-                      }}
+                      onMouseEnter={() => setHoveredId(item.id)}
+                      onMouseLeave={() => setHoveredId(null)}
                     >
                       {item.icon && (
                         <div
