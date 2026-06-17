@@ -139,7 +139,7 @@ function InputField({
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
+        className="w-full px-4 py-3 rounded-xl text-base outline-none transition-all duration-200"
         style={{
           background: 'var(--bg-surface-elevated)',
           border: `1.5px solid ${error ? '#DC2626' : 'var(--color-border)'}`,
@@ -619,7 +619,7 @@ export function ServicesPageClient() {
                   </label>
                   <textarea value={form.comment} onChange={e => set('comment', e.target.value)}
                     placeholder={t('wizard.commentPlaceholder')} rows={3}
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none transition-all duration-200"
+                    className="w-full px-4 py-3 rounded-xl text-base outline-none resize-none transition-all duration-200"
                     style={{ background: 'var(--bg-surface-elevated)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
                     onFocus={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
                     onBlur={e => (e.currentTarget.style.borderColor = 'var(--color-border)')} />
