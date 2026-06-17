@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Building2, Truck, Globe, Wrench, Package,
   ArrowRight, ChevronLeft, Check, Sparkles, Star,
-  Calendar, Trash2, Zap, PackageCheck,
+  Trash2, Zap, PackageCheck,
 } from 'lucide-react'
 import { KZ_PHONE_RE } from '@/lib/validators'
 
