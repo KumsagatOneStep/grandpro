@@ -69,7 +69,7 @@ export function AnimatedSelect({
                 layoutId="dropdown"
                 animate={{ borderRadius: 12 }}
                 onClick={() => setOpen(true)}
-                aria-expanded={false}
+                aria-expanded={open}
                 aria-haspopup="listbox"
                 className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left overflow-hidden"
                 style={{
@@ -108,7 +108,7 @@ export function AnimatedSelect({
                 className="w-full overflow-hidden py-2"
                 style={{
                   background: 'var(--bg-surface-elevated)',
-                  border: `1.5px solid ${open ? 'var(--color-primary)' : borderColor}`,
+                  border: `1.5px solid var(--color-primary)`,
                   borderRadius: 12,
                 }}
               >
@@ -118,6 +118,7 @@ export function AnimatedSelect({
                   </span>
                   <button
                     type="button"
+                    aria-label="Закрыть"
                     onClick={() => setOpen(false)}
                     className="w-6 h-6 rounded-full flex items-center justify-center"
                     style={{ background: 'var(--bg-surface)', color: 'var(--color-text-muted)' }}
