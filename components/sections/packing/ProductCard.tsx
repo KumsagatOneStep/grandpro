@@ -48,7 +48,7 @@ export function ProductCard({ product, onAdd, isInCart }: ProductCardProps) {
 
   return (
     <div
-      className="rounded-xl overflow-hidden flex flex-col"
+      className="rounded-xl overflow-hidden flex flex-col h-full"
       style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-border)' }}
     >
       {/* Image slider */}

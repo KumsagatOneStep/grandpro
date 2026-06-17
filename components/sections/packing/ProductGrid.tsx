@@ -42,6 +42,7 @@ export function ProductGrid({ products, onAddItem, cartItemIds }: ProductGridPro
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
+              className="h-full"
             >
               <ProductCard product={product} onAdd={onAddItem} isInCart={cartItemIds.has(product.id)} />
             </motion.div>
