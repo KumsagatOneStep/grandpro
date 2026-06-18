@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Phone, Mail, MessageCircle, Send, Camera, Music2, MapPin, CheckCircle2 } from 'lucide-react'
+import { Phone, Mail, MessageCircle, Send, Music2, MapPin, CheckCircle2 } from 'lucide-react'
 
 type TabId = 'b2b' | 'partner'
 
@@ -10,15 +10,22 @@ const CONTACTS = [
   { icon: Mail,          labelKey: 'email',     value: 'info@grandpro.kz', href: 'mailto:info@grandpro.kz' },
   { icon: MessageCircle, labelKey: 'whatsapp',  value: '+7 707 709 74 22', href: 'https://wa.me/77077097422' },
   { icon: Send,          labelKey: 'telegram',  value: '@grandpro_kz',     href: 'https://t.me/grandpro_kz' },
-  { icon: Camera,        labelKey: 'instagram', value: '@grandpro_moving', href: 'https://instagram.com/grandpro_moving' },
+  { icon: (_props: { size?: number; color?: string }) => (
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+    ), labelKey: 'instagram', value: '@grandpro_moving', href: 'https://instagram.com/grandpro_moving' },
   { icon: Music2,        labelKey: 'tiktok',    value: '@grandpro_moving', href: 'https://tiktok.com/@grandpro_moving' },
-] as const
+]
 
 export function CooperationPageClient() {
   const t = useTranslations('cooperation')
   const [tab, setTab] = useState<TabId>('b2b')
 
-  const bullets = t.raw(`${tab}.bullets`) as string[]
+  const raw = t.raw(`${tab}.bullets`)
+  const bullets = Array.isArray(raw) ? (raw as string[]) : []
 
   return (
     <section className="pt-36 pb-20 px-4">
