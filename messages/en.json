@@ -485,5 +485,41 @@
       "addressRequired": "Please enter the delivery address",
       "closeLabel": "Close cart"
     }
+  },
+  "cooperation": {
+    "title": "Partnership",
+    "subtitle": "We work with businesses and partners on mutually beneficial terms",
+    "tabs": {
+      "b2b": "For Business",
+      "partner": "Partners"
+    },
+    "b2b": {
+      "text": "We offer corporate contracts with fixed rates and a dedicated manager for reliable business service.",
+      "bullets": [
+        "Corporate agreement with fixed rates",
+        "Ongoing volume discounts",
+        "Priority dispatch and personal manager",
+        "Monthly closing documents (acts, invoices)"
+      ]
+    },
+    "partner": {
+      "text": "We work with carriers, realtors, and developers — subcontracting and referral programs on transparent terms.",
+      "bullets": [
+        "Subcontracting for transport companies and carriers",
+        "Joint projects with realtors and developers",
+        "Referral program with fixed rewards",
+        "Direct contracts, no intermediaries"
+      ]
+    },
+    "contacts": {
+      "title": "Get in Touch",
+      "phone": "Phone",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "address": "Al-Farabi Ave, 77/7, Esentai Tower BC, Almaty"
+    }
   }
 }
