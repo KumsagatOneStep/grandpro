@@ -9,43 +9,43 @@ function TruckSVG() {
       viewBox="0 0 200 76"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: 'drop-shadow(0 6px 24px rgba(14,165,233,0.45))' }}
+      style={{ filter: 'drop-shadow(0 6px 24px rgba(168,85,247,0.45))' }}
       aria-hidden="true"
     >
       {/* ── Cargo box ── */}
-      <rect x="0" y="2" width="118" height="54" rx="4" fill="#0EA5E9" />
+      <rect x="0" y="2" width="118" height="54" rx="4" fill="#A855F7" />
       {/* Top highlight strip */}
-      <rect x="0" y="2" width="118" height="9" rx="4" fill="#38BDF8" />
+      <rect x="0" y="2" width="118" height="9" rx="4" fill="#C084FC" />
       {/* Door divider */}
-      <rect x="59" y="4" width="2" height="50" fill="#0369A1" opacity="0.55" />
+      <rect x="59" y="4" width="2" height="50" fill="#7C3AED" opacity="0.55" />
       {/* Door handle */}
-      <rect x="63" y="26" width="10" height="3" rx="1.5" fill="#0284C7" />
+      <rect x="63" y="26" width="10" height="3" rx="1.5" fill="#6D28D9" />
       {/* Brand label */}
       <rect x="6" y="16" width="50" height="18" rx="3" fill="rgba(255,255,255,0.1)" />
       <text x="11" y="29" fill="white" fontSize="10" fontWeight="bold" fontFamily="Arial,sans-serif">
         GrandPro
       </text>
       {/* Accent stripe bottom */}
-      <rect x="0" y="50" width="118" height="6" rx="0" fill="#0284C7" opacity="0.6" />
+      <rect x="0" y="50" width="118" height="6" rx="0" fill="#6D28D9" opacity="0.6" />
       <rect x="0" y="50" width="118" height="6" rx="0"
         style={{ fill: 'url(#stripes)' }} opacity="0.3" />
 
       {/* ── Cab connector ── */}
-      <rect x="116" y="24" width="8" height="32" fill="#0284C7" />
+      <rect x="116" y="24" width="8" height="32" fill="#6D28D9" />
 
       {/* ── Cab body ── */}
-      <rect x="122" y="14" width="64" height="42" rx="8" fill="#0369A1" />
+      <rect x="122" y="14" width="64" height="42" rx="8" fill="#7C3AED" />
       {/* Roof visor */}
-      <rect x="124" y="8" width="48" height="10" rx="5" fill="#0284C7" />
+      <rect x="124" y="8" width="48" height="10" rx="5" fill="#6D28D9" />
       {/* Windshield */}
       <rect x="130" y="18" width="40" height="28" rx="5" fill="rgba(186,230,253,0.72)" />
       {/* Windshield glare */}
       <path d="M134 21 L131 41" stroke="rgba(255,255,255,0.28)" strokeWidth="3" strokeLinecap="round" />
       {/* Cab door handle */}
-      <rect x="124" y="36" width="5" height="4" rx="2" fill="#0EA5E9" opacity="0.65" />
+      <rect x="124" y="36" width="5" height="4" rx="2" fill="#A855F7" opacity="0.65" />
 
       {/* ── Front face ── */}
-      <rect x="182" y="24" width="18" height="32" rx="5" fill="#0284C7" />
+      <rect x="182" y="24" width="18" height="32" rx="5" fill="#6D28D9" />
       {/* Headlight */}
       <rect x="183" y="15" width="12" height="9" rx="3" fill="#FDE047" />
       {/* Bumper */}
@@ -139,7 +139,7 @@ export function Preloader() {
     <div
       className="fixed inset-0 z-[9999] overflow-hidden"
       style={{
-        background: '#050D1F',
+        background: '#0B0520',
         opacity: progress >= 100 ? 0 : 1,
         transition: 'opacity 0.65s ease',
         pointerEvents: progress >= 100 ? 'none' : 'all',
@@ -151,7 +151,7 @@ export function Preloader() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(14,165,233,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(168,85,247,0.08) 0%, transparent 70%)',
         }}
       />
 
@@ -161,7 +161,7 @@ export function Preloader() {
           className="font-heading font-extrabold text-white tracking-tight"
           style={{ fontSize: '2.6rem' }}
         >
-          Grand<span style={{ color: '#0EA5E9' }}>Pro</span>
+          Grand<span style={{ color: '#A855F7' }}>Pro</span>
           <span
             className="ml-3 font-normal"
             style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.18em' }}
@@ -212,7 +212,7 @@ export function Preloader() {
             width: `calc(${progress * 0.8}vw + ${progress * 0.1 - 10}px)`,
             height: '2px',
             background:
-              'linear-gradient(90deg,transparent 0%,rgba(14,165,233,0.25) 40%,rgba(14,165,233,0.5) 100%)',
+              'linear-gradient(90deg,transparent 0%,rgba(168,85,247,0.30) 40%,rgba(168,85,247,0.60) 100%)',
             transition: 'width 0.12s linear',
           }}
         />

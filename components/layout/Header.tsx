@@ -47,7 +47,7 @@ export function Header() {
         }}
       >
         <div className="flex items-center justify-between">
-          <a href="#" className="font-heading text-2xl font-extrabold tracking-tight">
+          <a href={`/${locale}`} className="font-heading text-2xl font-extrabold tracking-tight">
             Grand<span style={{ color: 'var(--color-primary)' }}>Pro</span>
           </a>
 

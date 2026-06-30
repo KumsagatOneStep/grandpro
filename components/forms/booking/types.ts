@@ -15,6 +15,7 @@ export const VEHICLES: Vehicle[] = [
 ]
 
 export type PaymentMethod = 'cash' | 'card'
+export type ClientType = 'individual' | 'legal'
 
 export type ActiveDrawer = 'address' | 'vehicle' | 'options' | 'datetime' | 'payment' | null
 
@@ -46,6 +47,8 @@ export interface BookingState {
   scheduledMinute: number | null
   payment: PaymentMethod
   phone: string
+  clientType: ClientType
+  companyName: string
 }
 
 export const DEFAULT_BOOKING_STATE: BookingState = {
@@ -61,4 +64,6 @@ export const DEFAULT_BOOKING_STATE: BookingState = {
   scheduledMinute: null,
   payment: 'cash',
   phone: '+7',
+  clientType: 'individual',
+  companyName: '',
 }

@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       subject: `Заказ упаковочных материалов — ${safeName}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-          <h2 style="color:#0369A1;">Заказ упаковочных материалов — GrandPro Moving</h2>
+          <h2 style="color:#7C3AED;">Заказ упаковочных материалов — GrandPro Moving</h2>
           <table style="width:100%;border-collapse:collapse;">
             <thead>
               <tr style="background:#f3f4f6;">

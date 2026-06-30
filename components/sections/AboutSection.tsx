@@ -13,7 +13,7 @@ export function AboutSection() {
   return (
     <section id="about" className="py-16 md:py-28" style={{ background: 'var(--bg-main)' }}>
       <div className="max-w-[1280px] mx-auto px-6">
-        <SectionHeader title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeader title={t('title')} subtitle={t('subtitle')} animated={false} />
 
         <div className="mb-10 md:mb-14 max-w-3xl mx-auto">
           <TruckIllustration />

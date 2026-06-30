@@ -19,7 +19,7 @@ export function StorageMap({ lat, lon, locationName, address, height = '260px' }
   useEffect(() => {
     const popup =
       `<div style="font-family:Arial,sans-serif;padding:4px 2px">` +
-      `<b style="font-size:13px;color:#0284C7">${locationName}</b><br>` +
+      `<b style="font-size:13px;color:#7C3AED">${locationName}</b><br>` +
       `<span style="font-size:12px;color:#475569">${address}</span>` +
       `</div>`
 

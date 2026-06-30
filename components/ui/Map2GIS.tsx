@@ -45,7 +45,7 @@ export function Map2GIS({
           .addTo(map)
           .bindPopup(
             '<div style="font-family:Arial,sans-serif;padding:4px 2px">' +
-            '<b style="font-size:13px;color:#0284C7">GrandPro Moving</b><br>' +
+            '<b style="font-size:13px;color:#7C3AED">GrandPro Moving</b><br>' +
             '<span style="font-size:12px;color:#475569">пр. Аль-Фараби, 77/7<br>БЦ Esentai Tower, Алматы</span>' +
             '</div>'
           )

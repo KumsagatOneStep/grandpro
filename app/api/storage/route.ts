@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       subject: `Аренда ${box.number} (${location.name} · ${box.area} м² · ${duration} мес) — ${safeName}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-          <h2 style="color:#0369A1;">Заявка на аренду склада — GrandPro Moving</h2>
+          <h2 style="color:#7C3AED;">Заявка на аренду склада — GrandPro Moving</h2>
           <table style="width:100%;border-collapse:collapse;">
             <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:600;width:160px;">Локация</td><td style="padding:8px;border-bottom:1px solid #eee;">${esc(location.name)}, ${esc(location.address)}</td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee;font-weight:600;">Бокс</td><td style="padding:8px;border-bottom:1px solid #eee;">${esc(box.number)}, этаж ${box.floor}, ${box.area} м² (${box.size})</td></tr>

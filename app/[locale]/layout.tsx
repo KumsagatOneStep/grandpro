@@ -3,18 +3,18 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
-import { Lexend, Source_Sans_3 } from 'next/font/google'
+import { Montserrat, Nunito } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import './globals.css'
 
-const lexend = Lexend({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+const montserrat = Montserrat({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-lexend',
   display: 'swap',
 })
 
-const sourceSans = Source_Sans_3({
+const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-source-sans',
@@ -87,7 +87,7 @@ export default async function LocaleLayout({
   const theme: 'dark' | 'light' = themeCookie === 'light' ? 'light' : 'dark'
 
   return (
-    <html lang={locale} className={`${theme} ${lexend.variable} ${sourceSans.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${theme} ${montserrat.variable} ${nunito.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* JSON-LD structured data — native <script> per Next.js 16 docs recommendation */}

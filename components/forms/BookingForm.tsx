@@ -13,7 +13,7 @@ import { DateTimeDrawer } from './booking/DateTimeDrawer'
 import { PaymentSheet } from './booking/PaymentSheet'
 import {
   BookingState, DEFAULT_BOOKING_STATE, VEHICLES,
-  ActiveDrawer, BookingOptions,
+  ActiveDrawer, BookingOptions, ClientType,
 } from './booking/types'
 import { calcBookingPrice } from '@/lib/booking-price'
 import { formatPrice } from '@/lib/utils'
@@ -70,6 +70,8 @@ export function BookingForm() {
       : `${state.scheduledDate} ${String(state.scheduledHour).padStart(2, '0')}:${String(state.scheduledMinute ?? 0).padStart(2, '0')}`
 
     const messageParts = [
+      `Клиент: ${state.clientType === 'legal' ? 'Юридическое лицо' : 'Физическое лицо'}`,
+      state.clientType === 'legal' && state.companyName ? `Компания: ${state.companyName}` : '',
       state.addressFrom ? `Откуда: ${state.addressFrom}` : '',
       state.addressTo ? `Куда: ${state.addressTo}` : '',
       `Машина: ${vehicle.label}`,
@@ -304,6 +306,63 @@ export function BookingForm() {
             </p>
           </button>
         </div>
+
+        {/* ── Client type toggle ── */}
+        <div
+          className="flex rounded-xl p-1 gap-1"
+          style={{ background: 'var(--bg-main)', border: '1px solid var(--color-border)' }}
+          role="group"
+          aria-label="Тип клиента"
+        >
+          {(['individual', 'legal'] as ClientType[]).map(type => {
+            const active = state.clientType === type
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => update('clientType', type)}
+                className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer"
+                style={{
+                  background: active ? 'var(--color-primary)' : 'transparent',
+                  color: active ? '#fff' : 'var(--color-text-muted)',
+                }}
+              >
+                {type === 'individual' ? 'Физ. лицо' : 'Юр. лицо'}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* ── Company name (юр. лицо only) ── */}
+        <AnimatePresence>
+          {state.clientType === 'legal' && (
+            <motion.div
+              key="company-input"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <label className="sr-only" htmlFor="bf-company">Название компании</label>
+              <input
+                id="bf-company"
+                type="text"
+                value={state.companyName}
+                onChange={e => update('companyName', e.target.value)}
+                placeholder="Название компании"
+                className="w-full px-4 py-3.5 rounded-2xl text-sm font-medium outline-none transition-all"
+                style={{
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text)',
+                }}
+                onFocus={e => (e.currentTarget.style.borderColor = 'var(--color-primary)')}
+                onBlur={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Phone input ── */}
         <div>

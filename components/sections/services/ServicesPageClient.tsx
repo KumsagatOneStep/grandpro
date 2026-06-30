@@ -1,14 +1,16 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { AnimatedSelect } from '@/components/ui/AnimatedSelect'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Building2, Truck, Globe, Wrench, Package,
   ArrowRight, ChevronLeft, Check, Sparkles, Star,
-  Trash2, Zap, PackageCheck,
+  Trash2, Zap, PackageCheck, MapPin,
 } from 'lucide-react'
 import { KZ_PHONE_RE } from '@/lib/validators'
+import { useAddressSuggest } from '@/components/forms/booking/useAddressSuggest'
+import { SuggestionList } from '@/components/forms/booking/SuggestionList'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,6 +58,7 @@ interface FormState {
   phone: string
   comment: string
   companyName: string
+  clientType: 'individual' | 'legal'
 }
 
 const INITIAL: FormState = {
@@ -68,7 +71,7 @@ const INITIAL: FormState = {
   destCountry: '', needsCustoms: false,
   equipmentType: '', equipmentWeight: '', needsCrane: false,
   fragileInventory: false,
-  name: '', phone: '', comment: '', companyName: '',
+  name: '', phone: '', comment: '', companyName: '', clientType: 'individual',
 }
 
 // ─── Smart trigger logic ──────────────────────────────────────────────────────
@@ -152,6 +155,82 @@ function InputField({
         onFocus={e => (e.currentTarget.style.borderColor = error ? '#DC2626' : 'var(--color-primary)')}
         onBlur={e => (e.currentTarget.style.borderColor = error ? '#DC2626' : 'var(--color-border)')}
       />
+      {error && <p className="text-xs" style={{ color: '#DC2626' }}>{error}</p>}
+    </div>
+  )
+}
+
+function AddressInputField({
+  label, value, onChange, placeholder, required, error,
+}: {
+  label: string; value: string; onChange: (v: string) => void
+  placeholder?: string; required?: boolean; error?: string
+}) {
+  const [focused, setFocused] = useState(false)
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { suggestions, loading } = useAddressSuggest(focused ? value : '')
+  const showDropdown = focused && (loading || suggestions.length > 0 || value.trim().length >= 2)
+
+  useEffect(() => {
+    return () => { if (blurTimerRef.current) clearTimeout(blurTimerRef.current) }
+  }, [])
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
+        {label}{required && <span style={{ color: '#DC2626' }}> *</span>}
+      </label>
+      <div className="relative">
+        <MapPin
+          size={16}
+          className="absolute left-3 top-[14px] pointer-events-none z-10"
+          style={{ color: focused ? 'var(--color-primary)' : 'var(--color-text-muted)' }}
+        />
+        <input
+          type="text"
+          autoComplete="off"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          onFocus={() => {
+            if (blurTimerRef.current) clearTimeout(blurTimerRef.current)
+            setFocused(true)
+          }}
+          onBlur={() => {
+            blurTimerRef.current = setTimeout(() => setFocused(false), 150)
+          }}
+          className="w-full pl-10 pr-4 py-3 rounded-xl text-base outline-none transition-all duration-200"
+          style={{
+            background: 'var(--bg-surface-elevated)',
+            border: `1.5px solid ${error ? '#DC2626' : focused ? 'var(--color-primary)' : 'var(--color-border)'}`,
+            color: 'var(--color-text)',
+            borderBottomLeftRadius: showDropdown ? 0 : undefined,
+            borderBottomRightRadius: showDropdown ? 0 : undefined,
+          }}
+        />
+        {showDropdown && (
+          <div
+            className="absolute left-0 right-0 z-50 rounded-b-xl overflow-hidden"
+            style={{
+              top: '100%',
+              background: 'var(--bg-surface)',
+              border: '1.5px solid var(--color-primary)',
+              borderTop: 'none',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            }}
+          >
+            <SuggestionList
+              suggestions={suggestions}
+              loading={loading}
+              onSelect={s => {
+                if (blurTimerRef.current) clearTimeout(blurTimerRef.current)
+                onChange(s.fullName)
+                setFocused(false)
+              }}
+            />
+          </div>
+        )}
+      </div>
       {error && <p className="text-xs" style={{ color: '#DC2626' }}>{error}</p>}
     </div>
   )
@@ -388,7 +467,7 @@ const SERVICE_ICONS: Record<ServiceType, React.ElementType> = {
   international: Globe, rigging: Wrench, packing: Package,
 }
 const SERVICE_COLORS: Record<ServiceType, string> = {
-  apartment: '#0369A1', office: '#7C3AED', cargo: '#D97706',
+  apartment: '#7C3AED', office: '#6D28D9', cargo: '#D97706',
   international: '#059669', rigging: '#DC2626', packing: '#0891B2',
 }
 function ServiceIcon({ type }: { type: ServiceType }) {
@@ -556,10 +635,10 @@ export function ServicesPageClient() {
                     icon: <ServiceIcon type={type} />,
                   }))}
                 />
-                <InputField label={t('wizard.fromAddress')} value={form.fromAddress}
+                <AddressInputField label={t('wizard.fromAddress')} value={form.fromAddress}
                   onChange={v => set('fromAddress', v)} required placeholder="ул. Абая 1, Алматы"
                   error={errors.fromAddress} />
-                <InputField label={t('wizard.toAddress')} value={form.toAddress}
+                <AddressInputField label={t('wizard.toAddress')} value={form.toAddress}
                   onChange={v => set('toAddress', v)} required placeholder="пр. Достык 123, Алматы"
                   error={errors.toAddress} />
                 <InputField label={t('wizard.date')} value={form.date}
@@ -607,13 +686,40 @@ export function ServicesPageClient() {
             {step === 3 && (
               <motion.div key="s3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
                 className="flex flex-col gap-5">
+
+                {/* ── Физ. / Юр. лицо ── */}
+                <div
+                  className="flex rounded-xl p-1 gap-1"
+                  style={{ background: 'var(--bg-surface-elevated)', border: '1.5px solid var(--color-border)' }}
+                  role="group"
+                  aria-label="Тип клиента"
+                >
+                  {(['individual', 'legal'] as const).map(type => {
+                    const active = form.clientType === type
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => set('clientType', type)}
+                        className="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer"
+                        style={{
+                          background: active ? 'var(--color-primary)' : 'transparent',
+                          color: active ? '#fff' : 'var(--color-text-muted)',
+                        }}
+                      >
+                        {type === 'individual' ? 'Физ. лицо' : 'Юр. лицо'}
+                      </button>
+                    )
+                  })}
+                </div>
+
                 <InputField label={t('wizard.name')} value={form.name}
                   onChange={v => set('name', v)} required placeholder="Иван Петров"
                   error={errors.name} autoComplete="name" />
                 <InputField label={t('wizard.phone')} value={form.phone}
                   onChange={v => set('phone', v)} required placeholder="+7 777 123 45 67"
                   type="tel" error={errors.phone} autoComplete="tel" inputMode="tel" />
-                {isB2B && (
+                {(isB2B || form.clientType === 'legal') && (
                   <InputField label="Название компании" value={form.companyName}
                     onChange={v => set('companyName', v)} placeholder="ТОО «Название»"
                     autoComplete="organization" />
@@ -732,7 +838,7 @@ export function ServicesPageClient() {
                     /* No triggers fired — show general Clear Service */
                     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                       className="rounded-3xl p-6"
-                      style={{ background: 'linear-gradient(135deg,#0369A118,#0EA5E918)', border: '1.5px solid var(--color-primary)' }}>
+                      style={{ background: 'linear-gradient(135deg,#7C3AED18,#A855F718)', border: '1.5px solid var(--color-primary)' }}>
                       <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
                           style={{ background: 'var(--color-primary)', color: 'white' }}>

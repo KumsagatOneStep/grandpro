@@ -146,7 +146,7 @@ export async function sendServiceRequestEmail(data: ServiceRequestData) {
     subject: `${data.clearService || data.upsellType ? '[UPSELL] ' : ''}Заявка: ${SERVICE_LABELS[type] ?? type} — ${name}`,
     html: `
       <div style="font-family:sans-serif;max-width:640px;margin:0 auto;">
-        <h2 style="color:#0369A1;margin-bottom:16px;">Новая заявка — GrandPro Moving</h2>
+        <h2 style="color:#7C3AED;margin-bottom:16px;">Новая заявка — GrandPro Moving</h2>
         ${upsellTag}
         <table style="width:100%;border-collapse:collapse;">
           ${row('Услуга', SERVICE_LABELS[type] ?? esc(type))}
@@ -175,7 +175,7 @@ export async function sendContactEmail(data: ContactEmailData) {
     subject: `Новая заявка от ${name}`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #0369A1;">Новая заявка с сайта GrandPro Moving</h2>
+        <h2 style="color: #7C3AED;">Новая заявка с сайта GrandPro Moving</h2>
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold; width: 120px;">Имя:</td>

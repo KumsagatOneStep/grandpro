@@ -12,12 +12,9 @@ import { Footer } from '@/components/layout/Footer'
 import { ScrollProgress } from '@/components/ui/ScrollProgress'
 import { BackToTop } from '@/components/ui/BackToTop'
 import { ChatWidget } from '@/components/ui/ChatWidget'
-import { Preloader } from '@/components/ui/Preloader'
-
 export default function HomePage() {
   return (
     <>
-      <Preloader />
       <ScrollProgress />
       <Header />
       <main>

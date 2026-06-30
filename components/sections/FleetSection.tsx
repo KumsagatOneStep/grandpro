@@ -26,11 +26,11 @@ function Wheel({ cx, cy, r }: { cx: number; cy: number; r: number }) {
     <g>
       <circle cx={cx} cy={cy} r={r}   fill="#1E293B" />
       <circle cx={cx} cy={cy} r={r * .65} fill="#374151" />
-      <line x1={cx} y1={cy - r * .55} x2={cx} y2={cy + r * .55} stroke="#0EA5E9" strokeWidth="2" />
-      <line x1={cx - r * .55} y1={cy} x2={cx + r * .55} y2={cy} stroke="#0EA5E9" strokeWidth="2" />
-      <line x1={cx - r * .38} y1={cy - r * .38} x2={cx + r * .38} y2={cy + r * .38} stroke="#0EA5E9" strokeWidth="1.5" opacity=".7" />
-      <line x1={cx + r * .38} y1={cy - r * .38} x2={cx - r * .38} y2={cy + r * .38} stroke="#0EA5E9" strokeWidth="1.5" opacity=".7" />
-      <circle cx={cx} cy={cy} r={r * .22} fill="#0EA5E9" />
+      <line x1={cx} y1={cy - r * .55} x2={cx} y2={cy + r * .55} stroke="#A855F7" strokeWidth="2" />
+      <line x1={cx - r * .55} y1={cy} x2={cx + r * .55} y2={cy} stroke="#A855F7" strokeWidth="2" />
+      <line x1={cx - r * .38} y1={cy - r * .38} x2={cx + r * .38} y2={cy + r * .38} stroke="#A855F7" strokeWidth="1.5" opacity=".7" />
+      <line x1={cx + r * .38} y1={cy - r * .38} x2={cx - r * .38} y2={cy + r * .38} stroke="#A855F7" strokeWidth="1.5" opacity=".7" />
+      <circle cx={cx} cy={cy} r={r * .22} fill="#A855F7" />
     </g>
   )
 }
@@ -95,21 +95,21 @@ function VehicleSVG({ vehicleId, lengthM, heightM }: {
       <ellipse cx={VB_W / 2} cy={GROUND_Y + 6} rx={cargoW / 2 + CAB_W / 2 + 20} ry={6} fill="rgba(0,0,0,0.07)" />
 
       {/* ── Cargo body ── */}
-      <rect x={cargoX} y={cargoY} width={cargoW} height={cargoH} rx="4" fill="white" stroke="#0369A1" strokeWidth="2" />
+      <rect x={cargoX} y={cargoY} width={cargoW} height={cargoH} rx="4" fill="white" stroke="#7C3AED" strokeWidth="2" />
 
       {/* top stripe */}
-      <rect x={cargoX} y={cargoY} width={cargoW} height={13} rx="4" fill="#0369A1" />
-      <rect x={cargoX} y={cargoY + 6} width={cargoW} height={7} fill="#0369A1" />
+      <rect x={cargoX} y={cargoY} width={cargoW} height={13} rx="4" fill="#7C3AED" />
+      <rect x={cargoX} y={cargoY + 6} width={cargoW} height={7} fill="#7C3AED" />
 
       {/* bottom stripe */}
-      <rect x={cargoX} y={cargoY + cargoH - 11} width={cargoW} height={11} fill="#0369A1" />
+      <rect x={cargoX} y={cargoY + cargoH - 11} width={cargoW} height={11} fill="#7C3AED" />
 
       {/* door seam */}
       {cargoW > 70 && (
         <line
           x1={cargoX + cargoW * .7} y1={cargoY + 13}
           x2={cargoX + cargoW * .7} y2={cargoY + cargoH - 11}
-          stroke="#0369A1" strokeWidth="1" strokeDasharray="3 3" opacity=".2"
+          stroke="#7C3AED" strokeWidth="1" strokeDasharray="3 3" opacity=".2"
         />
       )}
 
@@ -118,7 +118,7 @@ function VehicleSVG({ vehicleId, lengthM, heightM }: {
         x={cargoX + cargoW * .45}
         y={cargoY + cargoH * .52 + 4}
         textAnchor="middle"
-        fill="#0369A1"
+        fill="#7C3AED"
         fontSize={Math.max(7, Math.min(11, cargoW / 9))}
         fontWeight="800"
         fontFamily="Arial Black, Arial, sans-serif"
@@ -139,22 +139,22 @@ function VehicleSVG({ vehicleId, lengthM, heightM }: {
       {/* ── Cab ── */}
       <path
         d={`M ${cabX} ${cargoY + 8} L ${cabX} ${AXLE_Y} L ${cabX + CAB_W} ${AXLE_Y} L ${cabX + CAB_W} ${cargoY + 40} L ${cabX + CAB_W - 16} ${cabTopY} Z`}
-        fill="#0369A1"
+        fill="#7C3AED"
       />
       {/* cab window */}
       <path
         d={`M ${cabX + 6} ${cabTopY + 7} L ${cabX + 6} ${cargoY + 36} L ${cabX + CAB_W - 4} ${cargoY + 36} L ${cabX + CAB_W - 4} ${cargoY + 32} L ${cabX + CAB_W - 18} ${cabTopY + 7} Z`}
-        fill="#BAE6FD" stroke="#0284C7" strokeWidth="1.5"
+        fill="#EDE9FE" stroke="#6D28D9" strokeWidth="1.5"
       />
       {/* headlight */}
       <rect x={cabX + CAB_W - 8} y={cargoY + 40} width={10} height={12} rx="3" fill="#FEF9C3" stroke="#EAB308" strokeWidth="1" />
       {/* bumper */}
-      <rect x={cabX + CAB_W - 5} y={AXLE_Y - 5} width={12} height={12} rx="3" fill="#0284C7" />
+      <rect x={cabX + CAB_W - 5} y={AXLE_Y - 5} width={12} height={12} rx="3" fill="#6D28D9" />
       {/* door handle */}
-      <rect x={cabX + 11} y={AXLE_Y - 16} width={12} height={4} rx="2" fill="#38BDF8" />
+      <rect x={cabX + 11} y={AXLE_Y - 16} width={12} height={4} rx="2" fill="#C084FC" />
 
       {/* chassis rail */}
-      <rect x={cargoX} y={AXLE_Y} width={cargoW + CAB_W + 4} height={7} rx="2.5" fill="#0284C7" />
+      <rect x={cargoX} y={AXLE_Y} width={cargoW + CAB_W + 4} height={7} rx="2.5" fill="#6D28D9" />
 
       {/* ── Wheels ── */}
       {showDoubleRear && <Wheel cx={wr1X} cy={AXLE_Y} r={WHEEL_R} />}
